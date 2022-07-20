@@ -28,5 +28,11 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
                 .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
                 .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
 
+        // Added for CORS allow origin
+        cors.addMapping("/**").allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                // .allowCredentials(false).maxAge(3600)
+                ;
+
     }
 }

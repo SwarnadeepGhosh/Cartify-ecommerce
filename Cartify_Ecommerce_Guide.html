@@ -106,9 +106,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           id="toc-cartify-ecommerce-guide">Cartify Ecommerce Guide</a>
           <ul>
           <li><a href="#introduction"
-          id="toc-introduction">Introduction</a></li>
-          <li><a href="#backend-1.0" id="toc-backend-1.0">Backend
-          1.0</a>
+          id="toc-introduction">Introduction</a>
+          <ul>
+          <li><a href="#release-plan" id="toc-release-plan">Release
+          Plan</a></li>
+          </ul></li>
+          <li><a href="#backend-1.0"
+          id="toc-backend-1.0"><strong>Backend 1.0</strong></a>
           <ul>
           <li><a href="#database" id="toc-database">Database</a></li>
           <li><a href="#productcategory"
@@ -120,8 +124,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           id="toc-corsconfig">CorsConfig</a></li>
           <li><a href="#endpoints" id="toc-endpoints">Endpoints</a></li>
           </ul></li>
-          <li><a href="#frontend-1.0" id="toc-frontend-1.0">Frontend
-          1.0</a></li>
+          <li><a href="#frontend-1.0"
+          id="toc-frontend-1.0"><strong>Frontend 1.0</strong></a>
+          <ul>
+          <li><a href="#product-list-component"
+          id="toc-product-list-component">product-list
+          Component</a></li>
+          </ul></li>
           </ul></li>
           </ul>
         </div>
@@ -137,23 +146,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>User login/logout security</li>
 <li>Track previous orders for logged in users</li>
 </ul>
-<p><strong>Release Plan - Backend</strong></p>
+<h3 id="release-plan">Release Plan</h3>
 <ul>
-<li>Release 1.0
+<li><strong>Release 1.0</strong>
 <ul>
-<li>Show a list of products</li>
+<li><strong>Show a list of products</strong></li>
 </ul></li>
-<li>Release 2.0
+<li><strong>Release 2.0</strong>
 <ul>
-<li>Add products to shopping cart (CRUD)</li>
-<li>Shopping cart check out</li>
+<li><strong>Add products to shopping cart (CRUD)</strong></li>
+<li><strong>Shopping cart check out</strong></li>
 </ul></li>
-<li>Release 3.0
+<li><strong>Release 3.0</strong>
 <ul>
-<li>User login/logout security</li>
-<li>Track previous orders for logged in users</li>
+<li><strong>User login/logout security</strong></li>
+<li><strong>Track previous orders for logged in users</strong></li>
 </ul></li>
 </ul>
+<h2 id="backend-1.0"><strong>Backend 1.0</strong></h2>
 <p><strong>Development Process Backend - Release 1.0</strong></p>
 <ol type="1">
 <li>Set up the database tables</li>
@@ -163,8 +173,8 @@ Dependencies :
 <li>Develop the Entities: Product and ProductCategory</li>
 <li>Create REST APIs with Spring Data JPA Repositories and Spring Data
 REST</li>
+<li>Add CrossOrigin support to Spring Boot app</li>
 </ol>
-<h2 id="backend-1.0">Backend 1.0</h2>
 <h3 id="database">Database</h3>
 <p>We can connect postgres database from windows command line /
 powershell using below command</p>
@@ -307,12 +317,12 @@ endpoint, where all backend api calls will be added after that</p>
 <pre class="properties"><code>spring.data.rest.base-path=/api</code></pre>
 <p><strong>Default Endpoints</strong></p>
 <ul>
-<li><p>By default, Spring Data REST will create endpoints based on
-entity type</p>
+<li>By default, Spring Data REST will create endpoints based on entity
+type
 <ul>
-<li><p>Simple pluralized form</p></li>
-<li><p>First character of Entity type is lowercase</p></li>
-<li><p>Then just adds an “s” to the entity</p></li>
+<li>Simple pluralized form</li>
+<li>First character of Entity type is lowercase</li>
+<li>Then just adds an “s” to the entity</li>
 </ul></li>
 </ul>
 <p><strong>For example,</strong></p>
@@ -431,7 +441,54 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href=
 http://localhost:8080/api/products/1 -- To check single product
 http://localhost:8080/api/product-category -- To check all categories </code></pre>
 <hr />
-<h2 id="frontend-1.0">Frontend 1.0</h2>
+<h2 id="frontend-1.0"><strong>Frontend 1.0</strong></h2>
+<p><strong>Development Process Frontend - Release 1.0</strong></p>
+<ol type="1">
+<li>Create Angular project <code>ng new cartify-ui</code></li>
+<li>Create Angular component for product-list</li>
+<li>Develop TypeScript model class for Product</li>
+<li>Create Angular service to call REST APIs</li>
+<li>Update Angular component to subscribe to data from Angular
+service</li>
+<li>Display the data in an HTML page</li>
+</ol>
+<p><strong>Create Angular project Setup</strong></p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode sh"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ng new TodoList</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd Todolist</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> npm install bootstrap</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> npm install jquery</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">--</span> Downloaded versions: <span class="st">&quot;bootstrap&quot;</span>: <span class="st">&quot;^5.1.3&quot;</span>, <span class="st">&quot;jquery&quot;</span>: <span class="st">&quot;^3.6.0&quot;</span>,</span></code></pre></div>
+<p>Configure <code>angular.json</code> to activate bootstrap and
+jquery</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="er">&quot;architect&quot;:</span> <span class="fu">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;build&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;builder&quot;</span><span class="fu">:</span> <span class="st">&quot;@angular-devkit/build-angular:browser&quot;</span><span class="fu">,</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;options&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;outputPath&quot;</span><span class="fu">:</span> <span class="st">&quot;dist/course-api-ui&quot;</span><span class="fu">,</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;index&quot;</span><span class="fu">:</span> <span class="st">&quot;src/index.html&quot;</span><span class="fu">,</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;main&quot;</span><span class="fu">:</span> <span class="st">&quot;src/main.ts&quot;</span><span class="fu">,</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;polyfills&quot;</span><span class="fu">:</span> <span class="st">&quot;src/polyfills.ts&quot;</span><span class="fu">,</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;tsConfig&quot;</span><span class="fu">:</span> <span class="st">&quot;tsconfig.app.json&quot;</span><span class="fu">,</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;assets&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;src/favicon.ico&quot;</span><span class="ot">,</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;src/assets&quot;</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>            <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;styles&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;src/styles.css&quot;</span><span class="ot">,</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;./node_modules/bootstrap/dist/css/bootstrap.min.css&quot;</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>            <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;scripts&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;./node_modules/jquery/dist/jquery.min.js&quot;</span><span class="ot">,</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js&quot;</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>            <span class="ot">]</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">},</span></span></code></pre></div>
+<p>Included font-awesome icons in
+<strong><em>styles.css</em></strong></p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">@import</span> <span class="fu">url(</span><span class="st">&#39;https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css&#39;</span><span class="fu">)</span><span class="op">;</span></span></code></pre></div>
+<h3 id="product-list-component">product-list Component</h3>
         </div>
       </div>
     </div>

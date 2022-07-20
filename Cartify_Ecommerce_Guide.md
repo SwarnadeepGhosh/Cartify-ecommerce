@@ -18,20 +18,22 @@
 
 
 
-**Release Plan - Backend**
+### Release Plan
 
-- Release 1.0
-  - Show a list of products
+- **Release 1.0**
+  - **Show a list of products**
 
-- Release 2.0
-  - Add products to shopping cart (CRUD)
-  - Shopping cart check out
+- **Release 2.0**
+  - **Add products to shopping cart (CRUD)**
+  - **Shopping cart check out**
 
-- Release 3.0
-  - User login/logout security
-  - Track previous orders for logged in users
+- **Release 3.0**
+  - **User login/logout security**
+  - **Track previous orders for logged in users**
 
 
+
+## **Backend 1.0**
 
 **Development Process Backend - Release 1.0**
 
@@ -39,12 +41,9 @@
 2. Create a Spring Boot starter project (start.spring.io) with Dependencies : `web,data-rest,data-jpa,postgresql,lombok`
 3. Develop the Entities: Product and ProductCategory 
 4. Create REST APIs with Spring Data JPA Repositories and Spring Data REST
+5. Add CrossOrigin support to Spring Boot app
 
 
-
-
-
-## Backend 1.0
 
 ### Database
 
@@ -220,9 +219,7 @@ public interface ProductRepo  extends JpaRepository<Product, Long>{
 
 
 
-
-
-### Spring REST Config
+### Spring REST, CORS Config
 
 Here we used `spring-boot-starter-data-rest` to avoid making Controller and let spring do that in background. By this, We can use all REST methods without creating Controller.
 
@@ -237,11 +234,8 @@ spring.data.rest.base-path=/api
 **Default Endpoints**
 
 - By default, Spring Data REST will create endpoints based on entity type 
-
   - Simple pluralized form 
-
   - First character of Entity type is lowercase 
-
   - Then just adds an “s” to the entity 
 
 **For example,** 
@@ -300,33 +294,36 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
                 .forDomainType(ProductCategory.class)
                 .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
                 .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
+
+        // Added for CORS allow origin
+        cors.addMapping("/**").allowedOrigins("*")
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            // .allowCredentials(false).maxAge(3600)
+            ;
     }
 }
 ```
 
 
 
-### CorsConfig
+**CorsConfig (Will not work for Spring Rest)**
 
 ***CorsConfig.java*** - To allow frontend domain fetch values from backend.
 
 ```java
-package com.swarna.cartify.config;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+// package com.swarna.cartify.config;
+// ...
+// @Configuration
+// public class CorsConfig implements WebMvcConfigurer{
 
-@Configuration
-public class CorsConfig implements WebMvcConfigurer{
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        // WebMvcConfigurer.super.addCorsMappings(registry);
-        // registry.addMapping("/**").allowedOrigins(frontendURL)
-        registry.addMapping("/**").allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
-    }
-}
+//     @Override
+//     public void addCorsMappings(CorsRegistry registry) {
+//         // WebMvcConfigurer.super.addCorsMappings(registry);
+//         // registry.addMapping("/**").allowedOrigins(frontendURL)
+//         registry.addMapping("/**").allowedOrigins("*")
+//                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+//     }
+// }
 ```
 
 
@@ -345,4 +342,166 @@ http://localhost:8080/api/product-category -- To check all categories
 
 ---
 
-## Frontend 1.0
+## **Frontend 1.0**
+
+**Development Process Frontend - Release 1.0**
+
+1. Create Angular project `ng new cartify-ui`
+2. Create Angular component for product-list 
+3. Develop TypeScript model class for Product `ng g class common/product`
+4. Create Angular service to call REST APIs `ng g s services/productService`
+5. Update Angular component to subscribe to data from Angular service 
+6. Display the data in an HTML page
+
+
+
+### Setup
+
+**Create Angular project Setup**
+
+```sh
+$ ng new TodoList
+$ cd Todolist
+$ npm install bootstrap
+$ npm install jquery
+-- Downloaded versions: "bootstrap": "^5.1.3", "jquery": "^3.6.0",
+```
+
+Configure `angular.json` to activate bootstrap and jquery
+
+```json
+"architect": {
+    "build": {
+        "builder": "@angular-devkit/build-angular:browser",
+        "options": {
+            "outputPath": "dist/course-api-ui",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+                "src/favicon.ico",
+                "src/assets"
+            ],
+            "styles": [
+                "src/styles.css",
+                "./node_modules/bootstrap/dist/css/bootstrap.min.css"
+            ],
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.min.js",
+              "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ]
+        },
+```
+
+Included font-awesome icons in ***styles.css***
+
+```css
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+```
+
+
+
+ ***Product.ts* - Product model class**
+
+```typescript
+export class Product {
+    sku: string;
+    name: string;
+    description: string;
+    unitPrice: number;
+    imageUrl: string;
+    active: boolean;
+    unitsInStock: number;
+    dateCreated: Date;
+    lastUpdate: Date;
+}
+```
+
+
+
+### ProductService
+
+ ***product.service.ts* - ProductService **
+
+```typescript
+...
+export class ProductService {
+  constructor(private http: HttpClient) {}
+
+  public getAllProducts(): Observable<Product[]> {
+    return this.http.get<GetResponse>(`${environment.apiServerUrl}/products`).pipe(
+      map(response => response._embedded.products)) ;
+  }
+}
+
+interface GetResponse {
+  _embedded : {
+    products : Product[];
+  }
+}
+```
+
+
+
+### product-list Component
+
+***app.component.html***
+
+```html
+<div class="container">
+    <h1 class="mt-3 mb-3">Products</h1>
+    <app-product-list></app-product-list>
+</div>
+```
+
+
+
+***product-list.component.html***
+
+```html
+<table class="table table-striped">
+    <thead>
+        <tr class="table-dark">
+            <!-- <th scope="col">#</th> -->
+            <th></th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Units in Stock</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let product of products">
+            <!-- <th scope="row">{{product.}}</th> -->
+            <td class="align-middle"><img src="{{product.imageUrl}}" height="50" alt="image"></td>
+            <td class="align-middle">{{product.name}}</td>
+            <td class="align-middle">{{product.unitPrice | currency: 'USD'}}</td>
+            <td class="align-middle">{{product.unitsInStock}}</td>
+        </tr>
+    </tbody>
+</table>
+```
+
+***product-list.component.ts***
+
+```typescript
+export class ProductListComponent implements OnInit {
+  products: Product[];
+
+  constructor(private productService :ProductService) { }
+  ngOnInit(): void {
+    this.getAllProducts();
+  }
+
+  getAllProducts(){
+    this.productService.getAllProducts().subscribe(
+      data => { this.products = data })
+  }
+}
+```
+
+
+
+**Snapshot of Release 1.0**
+
+<img src="images/release1.0.png" alt="release1.0" style="zoom:67%;" />
