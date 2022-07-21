@@ -4,6 +4,6 @@
 
 export const environment = {
   production: false,
-  // apiServerUrl : 'https://cartify-ecommerce-fullstack.herokuapp.com/api'
-  apiServerUrl : 'http://localhost:8080/api'
+  apiServerUrl : 'https://cartify-ecommerce-fullstack.herokuapp.com/api'
+  // apiServerUrl : 'http://localhost:8080/api'
 };

@@ -1,0 +1,35 @@
+<table class="table table-striped">
+    <thead>
+        <tr class="table-dark">
+            <!-- <th scope="col">#</th> -->
+            <th></th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Units in Stock</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let product of products">
+            <!-- <th scope="row">{{product.}}</th> -->
+            <td class="align-middle"><img src="{{product.imageUrl}}" height="50" alt="image"></td>
+            <td class="align-middle">{{product.name}}</td>
+            <td class="align-middle">{{product.unitPrice | currency: 'USD'}}</td>
+            <td class="align-middle">{{product.unitsInStock}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Typescript class content -->
+<!--   products: Product[];
+
+  constructor(private productService :ProductService) { }
+
+  ngOnInit(): void {
+    this.getAllProducts();
+  }
+
+  getAllProducts(){
+    this.productService.getAllProducts().subscribe(
+      data => { this.products = data }
+    )
+  } -->

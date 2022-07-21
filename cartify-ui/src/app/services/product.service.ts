@@ -10,8 +10,11 @@ import { Product } from '../common/product';
 export class ProductService {
   constructor(private http: HttpClient) {}
 
+  // Spring REST gives 20 records by default , wheather there is any number of records or not
+  // We need to use ${environment.apiServerUrl}/products?size=100  to get all products
+
   public getAllProducts(): Observable<Product[]> {
-    return this.http.get<GetResponse>(`${environment.apiServerUrl}/products`).pipe(
+    return this.http.get<GetResponse>(`${environment.apiServerUrl}/products?size=100`).pipe(
       map(response => response._embedded.products)
     ) ;
   }

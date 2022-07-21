@@ -65,14 +65,13 @@ CREATE TABLE IF NOT EXISTS "cartify_ecommerce".product (
 -- -----------------------------------------------------
 -- Add sample data
 -- -----------------------------------------------------
-select * from "cartify_ecommerce".product_category pc ;
-select * from "cartify_ecommerce".product p ;
+select * from cartify_ecommerce.product_category pc ;
+select * from cartify_ecommerce.product p ;
 
 
-INSERT INTO "cartify_ecommerce".product_category(id, category_name) VALUES (nextval('cartify_ecommerce.pc_seq'), 'BOOKS');
+INSERT INTO cartify_ecommerce.product_category(id, category_name) VALUES (nextval('cartify_ecommerce.pc_seq'), 'BOOKS');
 
-INSERT INTO "cartify_ecommerce".product (id, sku, name, description, image_url, active, units_in_stock, unit_price, category_id, date_created)
-VALUES (nextval('cartify_ecommerce.product_seq'), 'BOOK-TECH-1000', 'JavaScript - The Fun Parts', 'Learn JavaScript',
+INSERT INTO "cartify_ecommerce".product (id, sku, name, description, image_url, active, units_in_stock, unit_price, category_id, date_created) VALUES (nextval('cartify_ecommerce.product_seq'), 'BOOK-TECH-1000', 'JavaScript - The Fun Parts', 'Learn JavaScript',
 'assets/images/products/placeholder.png' ,'1',100,19.99,1, NOW());
 
 INSERT INTO "cartify_ecommerce".product (id, sku, name, description, image_url, active, units_in_stock, unit_price, category_id, date_created)

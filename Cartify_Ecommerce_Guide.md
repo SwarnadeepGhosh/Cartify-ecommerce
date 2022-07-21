@@ -33,6 +33,26 @@
 
 
 
+**Release 2.0 - Plan**
+
+- Online Shop Template Integration
+
+- Search for products by category
+
+- Search for products by text box
+
+- Master / detail view of products
+
+- Pagination support for products
+
+- Add products to shopping cart (CRUD)
+
+- Shopping cart check out
+
+
+
+
+
 ## **Backend 1.0**
 
 **Development Process Backend - Release 1.0**
@@ -364,10 +384,11 @@ $ ng new TodoList
 $ cd Todolist
 $ npm install bootstrap
 $ npm install jquery
--- Downloaded versions: "bootstrap": "^5.1.3", "jquery": "^3.6.0",
+$ npm install @fortawesome/fontawesome-free
+-- Downloaded versions: "bootstrap": "^4.4.1", "jquery": "^3.6.0",
 ```
 
-Configure `angular.json` to activate bootstrap and jquery
+Configure `angular.json` to activate bootstrap, Font-awesome and jquery
 
 ```json
 "architect": {
@@ -384,8 +405,9 @@ Configure `angular.json` to activate bootstrap and jquery
                 "src/assets"
             ],
             "styles": [
-                "src/styles.css",
-                "./node_modules/bootstrap/dist/css/bootstrap.min.css"
+              "src/styles.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/@fortawesome/fontawesome-free/css/all.min.css"
             ],
             "scripts": [
               "./node_modules/jquery/dist/jquery.min.js",
@@ -505,3 +527,102 @@ export class ProductListComponent implements OnInit {
 **Snapshot of Release 1.0**
 
 <img src="images/release1.0.png" alt="release1.0" style="zoom:67%;" />
+
+
+
+
+
+
+
+## Frontend 2.0
+
+- Online Shop Template Integration
+
+- Search for products by category
+
+- Search for products by text box
+
+- Master / detail view of products
+
+- Pagination support for products
+
+- Add products to shopping cart (CRUD)
+
+- Shopping cart check out
+
+
+
+### Online Shop Template Integration
+
+**Development Process**
+
+1. Install Bootstrap and Fontawesome CSS styles locally using npm: `npm i bootstrap@4.4.1` and `npm i @fortawesome/fontawesome-free` . 
+
+   Then add css and JS paths (Demonstrated Above Frontend 1.0 > Setup)
+
+2. Add local custom CSS styles to Angular src/styles.css file
+
+3. Integrate template files into Angular app
+
+4. Add support for icons and logos
+
+5. Enhance our application with product images
+
+
+
+***app.component.html*** - writing only headlines here. For detail code, visit GitHub
+
+```html
+<!-- MENU SIDEBAR-->
+...
+<!-- HEADER DESKTOP-->
+...
+<!-- MAIN CONTENT of product list-->
+<app-product-list></app-product-list>
+...
+<!-- FOOTER STARTS -->
+```
+
+***product-list.component.html***
+
+```html
+<div class="main-content">
+    <div class="section-content section-content-p30">
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- Loop over the products -->
+                <div  *ngFor="let product of products" class="col-md-3">
+                    <div class="product-box">
+                        <a href="product-detail.html">
+                            <img src="{{ product.imageUrl }}" class="img-responsive">
+                        </a>
+                        <a href="product-detail.html">
+                            <h1>{{ product.name }}</h1>
+                        </a>
+                        <h2>{{ product.description }} </h2>
+                        <div class="price">{{ product.unitPrice | currency: 'USD' }}</div>
+                        <a href="#" class="primary-btn">Add to cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+> Spring REST gives 20 records by default , wheather there is any number of records or not
+>
+> We need to use **`${environment.apiServerUrl}/products?size=100`  to get all 100 products in frontend service ts file.**
+
+
+
+Snapshot
+
+<img src="images/feature2.0_1.png" alt="feature2.0_1" style="zoom:67%;" />
+
+
+
+
+
+### Search Products by Category
