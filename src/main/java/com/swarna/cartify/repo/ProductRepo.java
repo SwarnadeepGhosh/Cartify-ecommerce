@@ -13,4 +13,8 @@ public interface ProductRepo  extends JpaRepository<Product, Long>{
 
     //API will be => http://localhost:8080/api/products/search/findByCategoryId/?id=2
     Page<Product> findByCategoryId(@RequestParam("id") Long id, Pageable pageable);
+
+    //API will be => http://localhost:8080/api/products/search/findByNameContainingIgnoreCase?name=Pyth
+    Page<Product> findByNameContainingIgnoreCase(@RequestParam("name") String name, Pageable pageable);
+
 }

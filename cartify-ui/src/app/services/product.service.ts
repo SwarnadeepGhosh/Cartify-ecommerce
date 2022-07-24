@@ -20,18 +20,28 @@ export class ProductService {
       .pipe(map((response) => response._embedded.products));
   }
 
-  public getProductsByCategory(
-    currentCategoryId: number
-  ): Observable<Product[]> {
-    return this.http
-      .get<GetResponseProducts>(`${environment.apiServerUrl}/products/search/findByCategoryId/?id=${currentCategoryId}`)
-      .pipe(map((response) => response._embedded.products));
+  public getProductsByCategory(currentCategoryId: number): Observable<Product[]> {
+    const searchUrl = `${environment.apiServerUrl}/products/search/findByCategoryId/?id=${currentCategoryId}`;
+    return this.getProduct(searchUrl);
   }
 
   getProductCategories(): Observable<ProductCategory[]> {
     return this.http
-      .get<GetResponseProductCategory>(`${environment.apiServerUrl}/product-category`)
+      .get<GetResponseProductCategory>(
+        `${environment.apiServerUrl}/product-category`
+      )
       .pipe(map((response) => response._embedded.productCategory));
+  }
+
+  searchProducts(keyword: string): Observable<Product[]> {
+    const searchUrl = `${environment.apiServerUrl}/products/search/findByNameContainingIgnoreCase?name=${keyword}`;
+    return this.getProduct(searchUrl);
+  }
+
+  private getProduct(searchUrl: string): Observable<Product[]> {
+    return this.http
+      .get<GetResponseProducts>(searchUrl)
+      .pipe(map((response) => response._embedded.products));
   }
 }
 

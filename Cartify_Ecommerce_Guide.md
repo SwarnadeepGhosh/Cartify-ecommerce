@@ -790,6 +790,29 @@ Snapshot
 
 #### Backend - FindByCategory Dynamic
 
+**Goal :** 
+
+```json
+API : https://cartify-ecommerce-fullstack.herokuapp.com/api/product-category
+
+From : There is no entity id at the productCategory level, so no easy access
+{
+  "_embedded" : {
+    "productCategory" : [ {
+      "categoryName" : "Books",
+      "_links" : {
+	 
+To this : 
+{
+  "_embedded" : {
+    "productCategory" : [ {
+      "id" : 1,
+      "categoryName" : "Books",
+	  
+```
+
+
+
 ***MyDataRestConfig.java***
 
 ```java
@@ -908,4 +931,161 @@ export class ProductCategoryMenuComponent implements OnInit {
 
 
 
+
+
 ### Search Product by Keyword
+
+**Development Process**
+
+1. Modify Spring Boot app - Add a new search method
+
+2. Create new component for search
+
+3. Add new Angular route for searching
+
+4. Update SearchComponent to send data to search route
+
+5. Enhance ProductListComponent to search for products with ProductService
+
+6. Update ProductService to call URL on Spring Boot app
+
+
+
+***ProductRepo.java*** -  Backend - Find products based on name
+
+```java
+//API will be => http://localhost:8080/api/products/search/findByNameContainingIgnoreCase?name=Pyth
+Page<Product> findByNameContainingIgnoreCase(@RequestParam("name") String name, Pageable pageable);
+```
+
+
+
+#### Frontend- Search ProductBy Keyword
+
+***product.service.ts***
+
+```typescript
+searchProducts(keyword: string): Observable<Product[]> {
+    const searchUrl = `${environment.apiServerUrl}/products/search/findByNameContainingIgnoreCase?name=${keyword}`;
+    return this.getProduct(searchUrl);
+  }
+
+private getProduct(searchUrl: string): Observable<Product[]> {
+    return this.http
+      .get<GetResponseProducts>(searchUrl)
+      .pipe(map((response) => response._embedded.products));
+}
+```
+
+***app-routing.module.ts***
+
+```typescript
+{ path: 'search/:keyword', component: ProductListComponent },
+```
+
+***app-component.html*** - Sepeated search form from the header into a seperate component
+
+```html
+<!-- Search Form header -->
+<app-search></app-search>
+```
+
+
+
+***search.component.html*** - Sepeated search form from the header into a seperate component
+
+```html
+<div class="form-header">
+    <input #myInput type="text" placeholder="Search for products ..." class="au-input au-input-xl"
+        (keyup.enter)="doSearch(myInput.value)" />
+    <button (click)="doSearch(myInput.value)" class="au-btn-submit">
+        Search
+    </button>
+</div>
+```
+
+***search.component.ts*** - taking value and navigating to Product list component
+
+```typescript
+export class SearchComponent implements OnInit {
+  constructor(private router: Router) {}
+  ngOnInit(): void {}
+
+  doSearch(value: string) {
+    console.log(`value=${value}`);
+    this.router.navigateByUrl(`/search/${value}`);
+  }
+}
+```
+
+
+
+***product-list.component.ts*** - refactored as per search component
+
+```typescript
+export class ProductListComponent implements OnInit {
+  products: Product[];
+  currentCategoryId: number;
+  isSearchActive: boolean;
+    
+  constructor(private productService: ProductService, private route: ActivatedRoute ) {}
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(() => {
+      this.listProducts();
+    });
+  }
+
+  listProducts() {
+    this.isSearchActive = this.route.snapshot.paramMap.has('keyword');
+
+    if (this.isSearchActive) {
+      this.handleSearchProducts();
+    } else {
+      this.handleListProducts();
+    }
+  }
+
+  handleListProducts() {
+    //check if "id" parameter is available
+    const hascategoryId: boolean = this.route.snapshot.paramMap.has('id');
+
+    if (hascategoryId) {
+      // get the "id" parameter and converting to number using "+" symbol
+      this.currentCategoryId = +this.route.snapshot.paramMap.get('id');
+    } else {
+      // if no category id available, default set to 1
+      this.currentCategoryId = 1;
+    }
+
+    this.productService
+      .getProductsByCategory(this.currentCategoryId)
+      .subscribe((data) => {
+        this.products = data;
+      });
+  }
+
+  handleSearchProducts() {
+    const keyword: string = this.route.snapshot.paramMap.get('keyword');
+
+    this.productService.searchProducts(keyword).subscribe((data) => {
+      this.products = data;
+    });
+  }
+}
+```
+
+***product-list.component.html*** - Added 404 product not found message
+
+```html
+<!-- if products empty then display a message-->
+<div *ngIf="products?.length == 0" class="alert alert-warning col-md-12" role="alert">
+    No products found for given keyword.
+</div>
+```
+
+
+
+### **Product Detail View**
+
+
+
