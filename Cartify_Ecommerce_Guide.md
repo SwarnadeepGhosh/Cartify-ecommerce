@@ -534,7 +534,7 @@ export class ProductListComponent implements OnInit {
 
 
 
-## Frontend 2.0
+## **Release 2.0**
 
 - Online Shop Template Integration
 
@@ -625,4 +625,148 @@ Snapshot
 
 
 
-### Search Products by Category
+### Find by Category
+
+**Development Process**
+
+1. Define routes and Configure Router based on our routes , Define the Router Outlet
+
+4. Set up Router Links to pass category id param
+
+5. Enhance ProductListComponent to read category id param
+
+6. Modify Spring Boot app - REST Repository needs new method
+
+7. Update Angular Service to call new URL on Spring Boot app
+
+
+
+#### Backend- FindByCategory
+
+***ProductRepo.java***
+
+```java
+package com.swarna.cartify.repo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+...
+@RepositoryRestResource
+public interface ProductRepo  extends JpaRepository<Product, Long>{
+
+    //API will be => http://localhost:8080/api/products/search/findByCategoryId/?id=2
+    Page<Product> findByCategoryId(@RequestParam("id") Long id, Pageable pageable);
+}
+```
+
+
+
+#### Frontend- FindByCategory
+
+**Adding Angular Routing first**
+
+***app-routing.module.ts***
+
+```typescript
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { ProductListComponent } from './components/product-list/product-list.component';
+
+const routes: Routes = [
+  { path: 'category/:id', component: ProductListComponent },
+  { path: 'category', component: ProductListComponent },
+  { path: 'products', component: ProductListComponent },
+  { path: '', redirectTo: '/products', pathMatch: 'full' },
+  { path: '**', redirectTo: '/products', pathMatch: 'full' },
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}
+```
+
+***app.module.ts***
+
+```typescript
+import { AppRoutingModule } from './app-routing.module';
+...
+  imports: [...
+    AppRoutingModule,
+  ],
+```
+
+***app.component.html***
+
+```html
+...
+            <nav class="navbar-sidebar">
+                <ul class="list-unstyled navbar-list">
+                    <li><a routerLink="/category/1" routerLinkActive="active-link">Books</a></li>
+                    <li><a routerLink="/category/2" routerLinkActive="active-link">Coffee Mugs</a></li>
+                    <li><a routerLink="/category/3" routerLinkActive="active-link">Mouse Pads</a></li>
+                    <li><a routerLink="/category/4" routerLinkActive="active-link">Luggage Tags</a></li>
+	...
+        <!-- MAIN CONTENT-->
+        <router-outlet></router-outlet>
+        <!-- END MAIN CONTENT-->
+```
+
+
+
+
+
+***product.service.ts***
+
+```typescript
+...
+public getProductsByCategory(currentCategoryId: number): Observable<Product[]> {
+    return this.http.get<GetResponse>(`${environment.apiServerUrl}/products/search/findByCategoryId/?id=${currentCategoryId}`).pipe(
+      map(response => response._embedded.products)
+    ) ;
+...
+```
+
+***product-list.component.ts*** - Fetching Parameter from URL using Activated route and calling service method
+
+```typescript
+export class ProductListComponent implements OnInit {
+  products: Product[];
+  currentCategoryId: number;
+
+  constructor(private productService: ProductService, private route: ActivatedRoute ) {}
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(() => {
+      this.getAllProducts();
+    });
+  }
+
+  getAllProducts() {
+
+    //check if "id" parameter is available
+    const hascategoryId: boolean = this.route.snapshot.paramMap.has('id');
+
+    if(hascategoryId){
+      // get the "id" parameter and converting to number using "+" symbol
+      this.currentCategoryId = +this.route.snapshot.paramMap.get('id');
+    } else{
+      // if no category id available, default set to 1
+      this.currentCategoryId = 1;
+    }
+
+    this.productService.getProductsByCategory(this.currentCategoryId).subscribe((data) => {
+      this.products = data;
+    });
+  }
+}
+```
+
+Snapshot
+
+<img src="images/feature2.0_findbyCategory.png" alt="feature2.0_findbyCategory" style="zoom:67%;" />
+
+
+
+
+

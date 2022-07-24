@@ -133,15 +133,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           id="toc-product-list-component">product-list
           Component</a></li>
           </ul></li>
-          <li><a href="#frontend-2.0" id="toc-frontend-2.0">Frontend
-          2.0</a>
+          <li><a href="#release-2.0"
+          id="toc-release-2.0"><strong>Release 2.0</strong></a>
           <ul>
           <li><a href="#online-shop-template-integration"
           id="toc-online-shop-template-integration">Online Shop Template
           Integration</a></li>
-          <li><a href="#search-products-by-category"
-          id="toc-search-products-by-category">Search Products by
-          Category</a></li>
+          <li><a href="#find-by-category" id="toc-find-by-category">Find
+          by Category</a></li>
           </ul></li>
           </ul></li>
           </ul>
@@ -595,7 +594,7 @@ class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb20
 <span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p><strong>Snapshot of Release 1.0</strong></p>
 <p><img src="images/release1.0.png" alt="release1.0" style="zoom:67%;" /></p>
-<h2 id="frontend-2.0">Frontend 2.0</h2>
+<h2 id="release-2.0"><strong>Release 2.0</strong></h2>
 <ul>
 <li><p>Online Shop Template Integration</p></li>
 <li><p>Search for products by category</p></li>
@@ -665,7 +664,115 @@ get all 100 products in frontend service ts file.</strong></p>
 </blockquote>
 <p>Snapshot</p>
 <p><img src="images/feature2.0_1.png" alt="feature2.0_1" style="zoom:67%;" /></p>
-<h3 id="search-products-by-category">Search Products by Category</h3>
+<h3 id="find-by-category">Find by Category</h3>
+<p><strong>Development Process</strong></p>
+<ol type="1">
+<li><p>Define routes and Configure Router based on our routes , Define
+the Router Outlet</p></li>
+<li><p>Set up Router Links to pass category id param</p></li>
+<li><p>Enhance ProductListComponent to read category id param</p></li>
+<li><p>Modify Spring Boot app - REST Repository needs new
+method</p></li>
+<li><p>Update Angular Service to call new URL on Spring Boot
+app</p></li>
+</ol>
+<h4 id="backend--findbycategory">Backend- FindByCategory</h4>
+<p><strong><em>ProductRepo.java</em></strong></p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">swarna</span><span class="op">.</span><span class="im">cartify</span><span class="op">.</span><span class="im">repo</span><span class="op">;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">data</span><span class="op">.</span><span class="im">domain</span><span class="op">.</span><span class="im">Page</span><span class="op">;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">data</span><span class="op">.</span><span class="im">domain</span><span class="op">.</span><span class="im">Pageable</span><span class="op">;</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="kw">...</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="at">@RepositoryRestResource</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> ProductRepo  <span class="kw">extends</span> JpaRepository<span class="op">&lt;</span>Product<span class="op">,</span> <span class="bu">Long</span><span class="op">&gt;{</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">//API will be =&gt; http://localhost:8080/api/products/search/findByCategoryId/?id=2</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    Page<span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">findByCategoryId</span><span class="op">(</span><span class="at">@RequestParam</span><span class="op">(</span><span class="st">&quot;id&quot;</span><span class="op">)</span> <span class="bu">Long</span> id<span class="op">,</span> <span class="bu">Pageable</span> pageable<span class="op">);</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="frontend--findbycategory">Frontend- FindByCategory</h4>
+<p><strong>Adding Angular Routing first</strong></p>
+<p><strong><em>app-routing.module.ts</em></strong></p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { NgModule } <span class="im">from</span> <span class="st">&#39;@angular/core&#39;</span><span class="op">;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { RouterModule<span class="op">,</span> Routes } <span class="im">from</span> <span class="st">&#39;@angular/router&#39;</span><span class="op">;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { ProductListComponent } <span class="im">from</span> <span class="st">&#39;./components/product-list/product-list.component&#39;</span><span class="op">;</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> routes<span class="op">:</span> Routes <span class="op">=</span> [</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  { path<span class="op">:</span> <span class="st">&#39;category/:id&#39;</span><span class="op">,</span> component<span class="op">:</span> ProductListComponent }<span class="op">,</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  { path<span class="op">:</span> <span class="st">&#39;category&#39;</span><span class="op">,</span> component<span class="op">:</span> ProductListComponent }<span class="op">,</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  { path<span class="op">:</span> <span class="st">&#39;products&#39;</span><span class="op">,</span> component<span class="op">:</span> ProductListComponent }<span class="op">,</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  { path<span class="op">:</span> <span class="st">&#39;&#39;</span><span class="op">,</span> redirectTo<span class="op">:</span> <span class="st">&#39;/products&#39;</span><span class="op">,</span> pathMatch<span class="op">:</span> <span class="st">&#39;full&#39;</span> }<span class="op">,</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  { path<span class="op">:</span> <span class="st">&#39;**&#39;</span><span class="op">,</span> redirectTo<span class="op">:</span> <span class="st">&#39;/products&#39;</span><span class="op">,</span> pathMatch<span class="op">:</span> <span class="st">&#39;full&#39;</span> }<span class="op">,</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>]<span class="op">;</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>@<span class="fu">NgModule</span>({</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  imports<span class="op">:</span> [RouterModule<span class="op">.</span><span class="fu">forRoot</span>(routes)]<span class="op">,</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  exports<span class="op">:</span> [RouterModule]<span class="op">,</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> AppRoutingModule {}</span></code></pre></div>
+<p><strong><em>app.module.ts</em></strong></p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { AppRoutingModule } <span class="im">from</span> <span class="st">&#39;./app-routing.module&#39;</span><span class="op">;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  imports<span class="op">:</span> [<span class="op">...</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    AppRoutingModule<span class="op">,</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span></code></pre></div>
+<p><strong><em>app.component.html</em></strong></p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>            <span class="kw">&lt;nav</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;navbar-sidebar&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                <span class="kw">&lt;ul</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;list-unstyled navbar-list&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">&lt;li&gt;&lt;a</span> <span class="er">routerLink</span><span class="ot">=</span><span class="st">&quot;/category/1&quot;</span> <span class="er">routerLinkActive</span><span class="ot">=</span><span class="st">&quot;active-link&quot;</span><span class="kw">&gt;</span>Books<span class="kw">&lt;/a&gt;&lt;/li&gt;</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">&lt;li&gt;&lt;a</span> <span class="er">routerLink</span><span class="ot">=</span><span class="st">&quot;/category/2&quot;</span> <span class="er">routerLinkActive</span><span class="ot">=</span><span class="st">&quot;active-link&quot;</span><span class="kw">&gt;</span>Coffee Mugs<span class="kw">&lt;/a&gt;&lt;/li&gt;</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">&lt;li&gt;&lt;a</span> <span class="er">routerLink</span><span class="ot">=</span><span class="st">&quot;/category/3&quot;</span> <span class="er">routerLinkActive</span><span class="ot">=</span><span class="st">&quot;active-link&quot;</span><span class="kw">&gt;</span>Mouse Pads<span class="kw">&lt;/a&gt;&lt;/li&gt;</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">&lt;li&gt;&lt;a</span> <span class="er">routerLink</span><span class="ot">=</span><span class="st">&quot;/category/4&quot;</span> <span class="er">routerLinkActive</span><span class="ot">=</span><span class="st">&quot;active-link&quot;</span><span class="kw">&gt;</span>Luggage Tags<span class="kw">&lt;/a&gt;&lt;/li&gt;</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">&lt;!-- MAIN CONTENT--&gt;</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;router-outlet&gt;&lt;/router-outlet&gt;</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">&lt;!-- </span><span class="re">END</span><span class="co"> MAIN CONTENT--&gt;</span></span></code></pre></div>
+<p><strong><em>product.service.ts</em></strong></p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="fu">getProductsByCategory</span>(currentCategoryId<span class="op">:</span> <span class="dt">number</span>)<span class="op">:</span> Observable<span class="op">&lt;</span>Product[]<span class="op">&gt;</span> {</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">http</span><span class="op">.</span><span class="fu">get</span><span class="op">&lt;</span>GetResponse<span class="op">&gt;</span>(<span class="vs">`</span><span class="sc">${</span>environment<span class="op">.</span><span class="at">apiServerUrl</span><span class="sc">}</span><span class="vs">/products/search/findByCategoryId/?id=</span><span class="sc">${</span>currentCategoryId<span class="sc">}</span><span class="vs">`</span>)<span class="op">.</span><span class="fu">pipe</span>(</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">map</span>(response <span class="kw">=&gt;</span> response<span class="op">.</span><span class="at">_embedded</span><span class="op">.</span><span class="at">products</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">;</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span></code></pre></div>
+<p><strong><em>product-list.component.ts</em></strong> - Fetching
+Parameter from URL using Activated route and calling service method</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> ProductListComponent <span class="kw">implements</span> OnInit {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  products<span class="op">:</span> Product[]<span class="op">;</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  currentCategoryId<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constructor</span>(<span class="kw">private</span> productService<span class="op">:</span> ProductService<span class="op">,</span> <span class="kw">private</span> route<span class="op">:</span> ActivatedRoute ) {}</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ngOnInit</span>()<span class="op">:</span> <span class="dt">void</span> {</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">route</span><span class="op">.</span><span class="at">paramMap</span><span class="op">.</span><span class="fu">subscribe</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="fu">getAllProducts</span>()<span class="op">;</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getAllProducts</span>() {</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">//check if &quot;id&quot; parameter is available</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> hascategoryId<span class="op">:</span> <span class="dt">boolean</span> <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="at">route</span><span class="op">.</span><span class="at">snapshot</span><span class="op">.</span><span class="at">paramMap</span><span class="op">.</span><span class="fu">has</span>(<span class="st">&#39;id&#39;</span>)<span class="op">;</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(hascategoryId){</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>      <span class="co">// get the &quot;id&quot; parameter and converting to number using &quot;+&quot; symbol</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">currentCategoryId</span> <span class="op">=</span> <span class="op">+</span><span class="kw">this</span><span class="op">.</span><span class="at">route</span><span class="op">.</span><span class="at">snapshot</span><span class="op">.</span><span class="at">paramMap</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;id&#39;</span>)<span class="op">;</span></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span>{</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>      <span class="co">// if no category id available, default set to 1</span></span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">currentCategoryId</span> <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">productService</span><span class="op">.</span><span class="fu">getProductsByCategory</span>(<span class="kw">this</span><span class="op">.</span><span class="at">currentCategoryId</span>)<span class="op">.</span><span class="fu">subscribe</span>((data) <span class="kw">=&gt;</span> {</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">products</span> <span class="op">=</span> data<span class="op">;</span></span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Snapshot</p>
+<p><img src="images/feature2.0_findbyCategory.png" alt="feature2.0_findbyCategory" style="zoom:67%;" /></p>
         </div>
       </div>
     </div>

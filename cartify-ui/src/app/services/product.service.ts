@@ -14,7 +14,13 @@ export class ProductService {
   // We need to use ${environment.apiServerUrl}/products?size=100  to get all products
 
   public getAllProducts(): Observable<Product[]> {
-    return this.http.get<GetResponse>(`${environment.apiServerUrl}/products?size=100`).pipe(
+    return this.http.get<GetResponse>(`${environment.apiServerUrl}/products`).pipe(
+      map(response => response._embedded.products)
+    ) ;
+  }
+
+  public getProductsByCategory(currentCategoryId: number): Observable<Product[]> {
+    return this.http.get<GetResponse>(`${environment.apiServerUrl}/products/search/findByCategoryId/?id=${currentCategoryId}`).pipe(
       map(response => response._embedded.products)
     ) ;
   }
