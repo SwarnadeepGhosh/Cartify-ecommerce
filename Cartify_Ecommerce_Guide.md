@@ -770,3 +770,142 @@ Snapshot
 
 
 
+### FindBy Category Dynamically
+
+**Development Process**
+
+1. Modify Spring Boot app - Expose entity ids - Backend
+
+2. Create a class: ProductCategory : `ng g class common/product-category`
+
+3. Create new component for menu : `ng g c components/product-category-menu`
+
+4. Enhance menu component to read data from product service
+
+5. Update product service to call URL on Spring Boot app
+
+6. In HTML, replace hard-coded links with menu component
+
+
+
+#### Backend - FindByCategory Dynamic
+
+***MyDataRestConfig.java***
+
+```java
+public class MyDataRestConfig implements RepositoryRestConfigurer {
+    @Autowired
+    private EntityManager entityManager;
+...
+        // call an internal helper method
+        exposeIds(config);
+    }
+
+    private void exposeIds(RepositoryRestConfiguration config) {
+        //expose entity ids
+        // - get a list of all entity classes from the entity manager
+        Set<EntityType<?>> entities = entityManager.getMetamodel().getEntities();
+
+        // - create an array of the entity types
+        List<Class> entityClasses = new ArrayList<>();
+
+        // - get the entity types for the entities
+        for (EntityType tempEntityType : entities) {
+            entityClasses.add(tempEntityType.getJavaType());
+        }
+
+        // - expose the entity ids for the array of entity/domain types
+        Class[] domainTypes = entityClasses.toArray(new Class[0]);
+        config.exposeIdsFor(domainTypes);
+    }
+}
+```
+
+
+
+#### Frontend- FindByCategory Dynamic
+
+***product-category.ts***
+
+```typescript
+export class ProductCategory {
+  id: number;
+  categoryName: string;
+}
+```
+
+
+
+***product.service.ts***
+
+```typescript
+...
+  getProductCategories(): Observable<ProductCategory[]> {
+    return this.http
+      .get<GetResponseProductCategory>(`${environment.apiServerUrl}/product-category`)
+      .pipe(map((response) => response._embedded.productCategory));
+  }
+}
+interface GetResponseProductCategory {
+  _embedded: {
+    productCategory: ProductCategory[];
+  };
+}
+```
+
+
+
+***app.component.html***
+
+```html
+<!--<div class="menu-sidebar-content js-scrollbar1"> ... </div> -->
+
+Above DIV of sidebar will be replaced by below.
+<app-product-category-menu></app-product-category-menu>
+```
+
+
+
+***product-category-menu.component.html***
+
+```html
+<!-- Dynamic Category name coming from database -->
+<div class="menu-sidebar-content js-scrollbar1">
+    <nav class="navbar-sidebar">
+        <ul class="list-unstyled navbar-list">
+            <!-- <li>
+                <a routerLink="/category/1" routerLinkActive="active-link">Books</a>
+            </li> -->
+            <li *ngFor="let tempProductCategory of productCategories">
+                <a routerLink="/category/{{ tempProductCategory.id }}" routerLinkActive="active-link">
+                    {{ tempProductCategory.categoryName }}
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+```
+
+***product-category-menu.component.html***
+
+```typescript
+export class ProductCategoryMenuComponent implements OnInit {
+  productCategories: ProductCategory[];
+  constructor(private productService: ProductService) {}
+  ngOnInit() {
+    this.listProductCategories();
+  }
+
+  listProductCategories() {
+    this.productService.getProductCategories().subscribe((data) => {
+      console.log('Product Categories=' + JSON.stringify(data));
+      this.productCategories = data; });
+  }
+}
+```
+
+
+
+
+
+### Search Product by Keyword
