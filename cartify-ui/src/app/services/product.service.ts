@@ -11,18 +11,34 @@ import { ProductCategory } from '../common/product-category';
 export class ProductService {
   constructor(private http: HttpClient) {}
 
+  // Method is used by below multiple service methods to extract response
+  private getProductResponse(searchUrl: string): Observable<Product[]> {
+    return this.http
+      .get<GetResponseProducts>(searchUrl)
+      .pipe(map((response) => response._embedded.products));
+  }
+
   // Spring REST gives 20 records by default , wheather there is any number of records or not
   // We need to use ${environment.apiServerUrl}/products?size=100  to get all products
 
   public getAllProducts(): Observable<Product[]> {
-    return this.http
-      .get<GetResponseProducts>(`${environment.apiServerUrl}/products`)
-      .pipe(map((response) => response._embedded.products));
+    const url = `${environment.apiServerUrl}/products`;
+    return this.getProductResponse(url);
   }
 
   public getProductsByCategory(currentCategoryId: number): Observable<Product[]> {
-    const searchUrl = `${environment.apiServerUrl}/products/search/findByCategoryId/?id=${currentCategoryId}`;
-    return this.getProduct(searchUrl);
+    const url = `${environment.apiServerUrl}/products/search/findByCategoryId/?id=${currentCategoryId}`;
+    return this.getProductResponse(url);
+  }
+
+  searchProducts(keyword: string): Observable<Product[]> {
+    const searchUrl = `${environment.apiServerUrl}/products/search/findByNameContainingIgnoreCase?name=${keyword}`;
+    return this.getProductResponse(searchUrl);
+  }
+
+  getProduct(theProductId: number): Observable<Product> {
+    const productUrl = `${environment.apiServerUrl}/products/${theProductId}`;
+    return this.http.get<Product>(productUrl);
   }
 
   getProductCategories(): Observable<ProductCategory[]> {
@@ -33,16 +49,6 @@ export class ProductService {
       .pipe(map((response) => response._embedded.productCategory));
   }
 
-  searchProducts(keyword: string): Observable<Product[]> {
-    const searchUrl = `${environment.apiServerUrl}/products/search/findByNameContainingIgnoreCase?name=${keyword}`;
-    return this.getProduct(searchUrl);
-  }
-
-  private getProduct(searchUrl: string): Observable<Product[]> {
-    return this.http
-      .get<GetResponseProducts>(searchUrl)
-      .pipe(map((response) => response._embedded.products));
-  }
 }
 
 interface GetResponseProducts {

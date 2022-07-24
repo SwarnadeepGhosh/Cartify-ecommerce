@@ -1085,7 +1085,117 @@ export class ProductListComponent implements OnInit {
 
 
 
-### **Product Detail View**
+Snapshot : 
+
+<img src="images/feature2.0_searchKeyword.png" alt="feature2.0_searchKeyword" style="zoom:67%;" />
+
+
+
+### **Product Detail Page**
+
+Development Process
+
+1. Create new component for product details : `ng g c components/ProductDetails`
+
+2. Add new Angular route for product details
+
+3. Add router links to the product-list-grid HTML page
+
+4. Enhance ProductDetailsComponent to retrieve product from ProductService
+
+5. Update ProductService to call URL on Spring Boot app
+
+6. Update HTML page for ProductDetailsComponent to display product details
+
+
+
+***product.ts*** - added id in model
+
+```typescript
+export class Product {
+    id: string;
+	...
+}
+```
+
+***app-routing.module.ts***
+
+```typescript
+{ path: 'products/:id', component: ProductDetailsComponent },
+```
+
+***product-list.component.html***
+
+```html
+<div class="product-box">
+    <a routerLink="/products/{{product.id}}">
+        <img src="{{ product.imageUrl }}" class="img-responsive">
+    </a>
+    <a routerLink="/products/{{product.id}}">
+        <h1>{{ product.name }}</h1>
+    </a>
+```
+
+***product.service.ts***
+
+```typescript
+getProduct(theProductId: number): Observable<Product> {
+    const productUrl = `${environment.apiServerUrl}/products/${theProductId}`;
+    return this.http.get<Product>(productUrl);
+}
+```
+
+
+
+***product-details.component.html*** 
+
+```html
+<div class="detail-section">
+    <div class="container-fluid">
+        <img src="{{ product.imageUrl }}" class="detail-img">
+        <h3>{{ product.name }}</h3>
+        <div class="price">{{ product.unitPrice | currency:'USD' }}</div>
+        <a href="#" class="primary-btn">Add to cart</a>
+        <hr>
+        <h4>Description</h4>
+        <p>{{ product.description }}</p>
+        <a routerLink="/products" class="mt-5">Back to Product List</a>
+    </div>
+</div>
+```
+
+***product-details.component.css***
+
+```css
+.detail-img{
+    width: 300px;
+}
+```
+
+***product-details.component.ts***
+
+```typescript
+export class ProductDetailsComponent implements OnInit {
+    product: Product = new Product();
+
+    constructor(private productService: ProductService, private route: ActivatedRoute ) {}
+
+    ngOnInit(): void { this.getProduct();}
+
+    getProduct() {
+        const theProductId: number = +this.route.snapshot.paramMap.get('id');
+
+        this.productService.getProduct(theProductId).subscribe((data) => {
+            this.product = data; });
+    }
+}
+```
+
+
+
+Snapshot
+
+<img src="images/feature2.0_ProductDetail.png" alt="feature 2.0 Product Detail" style="zoom:67%;" />
 
 
 
