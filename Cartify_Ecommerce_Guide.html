@@ -111,6 +111,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <li><a href="#release-plan" id="toc-release-plan">Release
           Plan</a></li>
           </ul></li>
+          </ul></li>
           <li><a href="#backend-1.0"
           id="toc-backend-1.0"><strong>Backend 1.0</strong></a>
           <ul>
@@ -139,9 +140,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <li><a href="#online-shop-template-integration"
           id="toc-online-shop-template-integration">Online Shop Template
           Integration</a></li>
-          <li><a href="#find-by-category" id="toc-find-by-category">Find
-          by Category</a></li>
-          </ul></li>
+          <li><a href="#findbycategory"
+          id="toc-findbycategory">FindByCategory</a></li>
+          <li><a href="#findbycategory-dynamically"
+          id="toc-findbycategory-dynamically">FindByCategory
+          Dynamically</a></li>
+          <li><a href="#searchproduct-by-keyword"
+          id="toc-searchproduct-by-keyword">SearchProduct by
+          Keyword</a></li>
+          <li><a href="#product-detail-page"
+          id="toc-product-detail-page"><strong>Product Detail
+          Page</strong></a></li>
+          <li><a href="#pagination"
+          id="toc-pagination"><strong>Pagination</strong></a></li>
+          <li><a href="#shopping-cart" id="toc-shopping-cart">Shopping
+          Cart</a></li>
           </ul></li>
           </ul>
         </div>
@@ -184,7 +197,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Add products to shopping cart (CRUD)</p></li>
 <li><p>Shopping cart check out</p></li>
 </ul>
-<h2 id="backend-1.0"><strong>Backend 1.0</strong></h2>
+<hr />
+<h1 id="backend-1.0"><strong>Backend 1.0</strong></h1>
 <p><strong>Development Process Backend - Release 1.0</strong></p>
 <ol type="1">
 <li>Set up the database tables</li>
@@ -465,7 +479,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href=
 http://localhost:8080/api/products/1 -- To check single product
 http://localhost:8080/api/product-category -- To check all categories </code></pre>
 <hr />
-<h2 id="frontend-1.0"><strong>Frontend 1.0</strong></h2>
+<h1 id="frontend-1.0"><strong>Frontend 1.0</strong></h1>
 <p><strong>Development Process Frontend - Release 1.0</strong></p>
 <ol type="1">
 <li>Create Angular project <code>ng new cartify-ui</code></li>
@@ -594,7 +608,8 @@ class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb20
 <span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p><strong>Snapshot of Release 1.0</strong></p>
 <p><img src="images/release1.0.png" alt="release1.0" style="zoom:67%;" /></p>
-<h2 id="release-2.0"><strong>Release 2.0</strong></h2>
+<hr />
+<h1 id="release-2.0"><strong>Release 2.0</strong></h1>
 <ul>
 <li><p>Online Shop Template Integration</p></li>
 <li><p>Search for products by category</p></li>
@@ -664,7 +679,7 @@ get all 100 products in frontend service ts file.</strong></p>
 </blockquote>
 <p>Snapshot</p>
 <p><img src="images/feature2.0_1.png" alt="feature2.0_1" style="zoom:67%;" /></p>
-<h3 id="find-by-category">Find by Category</h3>
+<h3 id="findbycategory">FindByCategory</h3>
 <p><strong>Development Process</strong></p>
 <ol type="1">
 <li><p>Define routes and Configure Router based on our routes , Define
@@ -773,6 +788,556 @@ class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb28
 <span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Snapshot</p>
 <p><img src="images/feature2.0_findbyCategory.png" alt="feature2.0_findbyCategory" style="zoom:67%;" /></p>
+<h3 id="findbycategory-dynamically">FindByCategory Dynamically</h3>
+<p><strong>Development Process</strong></p>
+<ol type="1">
+<li><p>Modify Spring Boot app - Expose entity ids - Backend</p></li>
+<li><p>Create a class: ProductCategory :
+<code>ng g class common/product-category</code></p></li>
+<li><p>Create new component for menu :
+<code>ng g c components/product-category-menu</code></p></li>
+<li><p>Enhance menu component to read data from product service</p></li>
+<li><p>Update product service to call URL on Spring Boot app</p></li>
+<li><p>In HTML, replace hard-coded links with menu component</p></li>
+</ol>
+<h4 id="backend---findbycategory-dynamic">Backend - FindByCategory
+Dynamic</h4>
+<p><strong>Goal :</strong></p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="er">API</span> <span class="er">:</span> <span class="er">https://cartify-ecommerce-fullstack.herokuapp.com/api/product-category</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="er">From</span> <span class="er">:</span> <span class="er">There</span> <span class="er">is</span> <span class="er">no</span> <span class="er">entity</span> <span class="er">id</span> <span class="er">at</span> <span class="er">the</span> <span class="er">productCategory</span> <span class="er">level,</span> <span class="er">so</span> <span class="er">no</span> <span class="er">easy</span> <span class="er">access</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;_embedded&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;productCategory&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="fu">{</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;categoryName&quot;</span> <span class="fu">:</span> <span class="st">&quot;Books&quot;</span><span class="fu">,</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;_links&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>     </span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="er">To</span> <span class="er">this</span> <span class="fu">:</span> </span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;_embedded&quot;</span> <span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;productCategory&quot;</span> <span class="fu">:</span> <span class="ot">[</span> <span class="fu">{</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span> <span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;categoryName&quot;</span> <span class="fu">:</span> <span class="st">&quot;Books&quot;</span><span class="fu">,</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>      </span></code></pre></div>
+<p><strong><em>MyDataRestConfig.java</em></strong></p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyDataRestConfig <span class="kw">implements</span> RepositoryRestConfigurer <span class="op">{</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> EntityManager entityManager<span class="op">;</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="kw">...</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// call an internal helper method</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">exposeIds</span><span class="op">(</span>config<span class="op">);</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">exposeIds</span><span class="op">(</span>RepositoryRestConfiguration config<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">//expose entity ids</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// - get a list of all entity classes from the entity manager</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Set</span><span class="op">&lt;</span>EntityType<span class="op">&lt;?&gt;&gt;</span> entities <span class="op">=</span> entityManager<span class="op">.</span><span class="fu">getMetamodel</span><span class="op">().</span><span class="fu">getEntities</span><span class="op">();</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// - create an array of the entity types</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Class</span><span class="op">&gt;</span> entityClasses <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">// - get the entity types for the entities</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span>EntityType tempEntityType <span class="op">:</span> entities<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>            entityClasses<span class="op">.</span><span class="fu">add</span><span class="op">(</span>tempEntityType<span class="op">.</span><span class="fu">getJavaType</span><span class="op">());</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>        <span class="co">// - expose the entity ids for the array of entity/domain types</span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Class</span><span class="op">[]</span> domainTypes <span class="op">=</span> entityClasses<span class="op">.</span><span class="fu">toArray</span><span class="op">(</span><span class="kw">new</span> <span class="bu">Class</span><span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>        config<span class="op">.</span><span class="fu">exposeIdsFor</span><span class="op">(</span>domainTypes<span class="op">);</span></span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="frontend--findbycategory-dynamic">Frontend- FindByCategory
+Dynamic</h4>
+<p><strong><em>product-category.ts</em></strong></p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> ProductCategory {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  id<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  categoryName<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong><em>product.service.ts</em></strong></p>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getProductCategories</span>()<span class="op">:</span> Observable<span class="op">&lt;</span>ProductCategory[]<span class="op">&gt;</span> {</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">http</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">get</span><span class="op">&lt;</span>GetResponseProductCategory<span class="op">&gt;</span>(<span class="vs">`</span><span class="sc">${</span>environment<span class="op">.</span><span class="at">apiServerUrl</span><span class="sc">}</span><span class="vs">/product-category`</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">pipe</span>(<span class="fu">map</span>((response) <span class="kw">=&gt;</span> response<span class="op">.</span><span class="at">_embedded</span><span class="op">.</span><span class="at">productCategory</span>))<span class="op">;</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> GetResponseProductCategory {</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  _embedded<span class="op">:</span> {</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    productCategory<span class="op">:</span> ProductCategory[]<span class="op">;</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong><em>app.component.html</em></strong></p>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--&lt;div class=&quot;menu-sidebar-content js-scrollbar1&quot;&gt; ... &lt;/div&gt; --&gt;</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>Above DIV of sidebar will be replaced by below.</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;app-product-category-menu&gt;&lt;/app-product-category-menu&gt;</span></span></code></pre></div>
+<p><strong><em>product-category-menu.component.html</em></strong></p>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Dynamic Category name coming from database --&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;menu-sidebar-content js-scrollbar1&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;nav</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;navbar-sidebar&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;ul</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;list-unstyled navbar-list&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>            <span class="co">&lt;!-- &lt;li&gt;</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co">                &lt;a routerLink=&quot;/category/1&quot; routerLinkActive=&quot;active-link&quot;&gt;Books&lt;/a&gt;</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="co">            &lt;/li&gt; --&gt;</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>            <span class="kw">&lt;li</span> <span class="er">*ngFor</span><span class="ot">=</span><span class="st">&quot;let tempProductCategory of productCategories&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>                <span class="kw">&lt;a</span> <span class="er">routerLink</span><span class="ot">=</span><span class="st">&quot;/category/{{ tempProductCategory.id }}&quot;</span> <span class="er">routerLinkActive</span><span class="ot">=</span><span class="st">&quot;active-link&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>                    {{ tempProductCategory.categoryName }}</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>                <span class="kw">&lt;/a&gt;</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>            <span class="kw">&lt;/li&gt;</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;/ul&gt;</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/nav&gt;</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div>
+<p><strong><em>product-category-menu.component.html</em></strong></p>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> ProductCategoryMenuComponent <span class="kw">implements</span> OnInit {</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  productCategories<span class="op">:</span> ProductCategory[]<span class="op">;</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constructor</span>(<span class="kw">private</span> productService<span class="op">:</span> ProductService) {}</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ngOnInit</span>() {</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">listProductCategories</span>()<span class="op">;</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">listProductCategories</span>() {</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">productService</span><span class="op">.</span><span class="fu">getProductCategories</span>()<span class="op">.</span><span class="fu">subscribe</span>((data) <span class="kw">=&gt;</span> {</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>      <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Product Categories=&#39;</span> <span class="op">+</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(data))<span class="op">;</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">productCategories</span> <span class="op">=</span> data<span class="op">;</span> })<span class="op">;</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="searchproduct-by-keyword">SearchProduct by Keyword</h3>
+<p><strong>Development Process</strong></p>
+<ol type="1">
+<li><p>Modify Spring Boot app - Add a new search method</p></li>
+<li><p>Create new component for search</p></li>
+<li><p>Add new Angular route for searching</p></li>
+<li><p>Update SearchComponent to send data to search route</p></li>
+<li><p>Enhance ProductListComponent to search for products with
+ProductService</p></li>
+<li><p>Update ProductService to call URL on Spring Boot app</p></li>
+</ol>
+<p><strong><em>ProductRepo.java</em></strong> - Backend - Find products
+based on name</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">//API will be =&gt; http://localhost:8080/api/products/search/findByNameContainingIgnoreCase?name=Pyth</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>Page<span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">findByNameContainingIgnoreCase</span><span class="op">(</span><span class="at">@RequestParam</span><span class="op">(</span><span class="st">&quot;name&quot;</span><span class="op">)</span> <span class="bu">String</span> name<span class="op">,</span> <span class="bu">Pageable</span> pageable<span class="op">);</span></span></code></pre></div>
+<h4 id="frontend--search-productby-keyword">Frontend- Search ProductBy
+Keyword</h4>
+<p><strong><em>product.service.ts</em></strong></p>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">searchProducts</span>(keyword<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> Observable<span class="op">&lt;</span>Product[]<span class="op">&gt;</span> {</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> searchUrl <span class="op">=</span> <span class="vs">`</span><span class="sc">${</span>environment<span class="op">.</span><span class="at">apiServerUrl</span><span class="sc">}</span><span class="vs">/products/search/findByNameContainingIgnoreCase?name=</span><span class="sc">${</span>keyword<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="fu">getProduct</span>(searchUrl)<span class="op">;</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="fu">getProduct</span>(searchUrl<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> Observable<span class="op">&lt;</span>Product[]<span class="op">&gt;</span> {</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">http</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">get</span><span class="op">&lt;</span>GetResponseProducts<span class="op">&gt;</span>(searchUrl)</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">pipe</span>(<span class="fu">map</span>((response) <span class="kw">=&gt;</span> response<span class="op">.</span><span class="at">_embedded</span><span class="op">.</span><span class="at">products</span>))<span class="op">;</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong><em>app-routing.module.ts</em></strong></p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>{ path<span class="op">:</span> <span class="st">&#39;search/:keyword&#39;</span><span class="op">,</span> component<span class="op">:</span> ProductListComponent }<span class="op">,</span></span></code></pre></div>
+<p><strong><em>app-component.html</em></strong> - Sepeated search form
+from the header into a seperate component</p>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Search Form header --&gt;</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;app-search&gt;&lt;/app-search&gt;</span></span></code></pre></div>
+<p><strong><em>search.component.html</em></strong> - Sepeated search
+form from the header into a seperate component</p>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;form-header&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;input</span> <span class="er">#myInput</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;text&quot;</span> <span class="er">placeholder</span><span class="ot">=</span><span class="st">&quot;Search for products ...&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;au-input au-input-xl&quot;</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="ot">        (keyup.enter)=</span><span class="st">&quot;doSearch(myInput.value)&quot;</span> <span class="kw">/&gt;</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;button</span> <span class="er">(click)</span><span class="ot">=</span><span class="st">&quot;doSearch(myInput.value)&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;au-btn-submit&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>        Search</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/button&gt;</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div>
+<p><strong><em>search.component.ts</em></strong> - taking value and
+navigating to Product list component</p>
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> SearchComponent <span class="kw">implements</span> OnInit {</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constructor</span>(<span class="kw">private</span> router<span class="op">:</span> Router) {}</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ngOnInit</span>()<span class="op">:</span> <span class="dt">void</span> {}</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">doSearch</span>(value<span class="op">:</span> <span class="dt">string</span>) {</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`value=</span><span class="sc">${</span>value<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">router</span><span class="op">.</span><span class="fu">navigateByUrl</span>(<span class="vs">`/search/</span><span class="sc">${</span>value<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong><em>product-list.component.ts</em></strong> - refactored as
+per search component</p>
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> ProductListComponent <span class="kw">implements</span> OnInit {</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  products<span class="op">:</span> Product[]<span class="op">;</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  currentCategoryId<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  isSearchActive<span class="op">:</span> <span class="dt">boolean</span><span class="op">;</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constructor</span>(<span class="kw">private</span> productService<span class="op">:</span> ProductService<span class="op">,</span> <span class="kw">private</span> route<span class="op">:</span> ActivatedRoute ) {}</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ngOnInit</span>()<span class="op">:</span> <span class="dt">void</span> {</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">route</span><span class="op">.</span><span class="at">paramMap</span><span class="op">.</span><span class="fu">subscribe</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="fu">listProducts</span>()<span class="op">;</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">listProducts</span>() {</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">isSearchActive</span> <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="at">route</span><span class="op">.</span><span class="at">snapshot</span><span class="op">.</span><span class="at">paramMap</span><span class="op">.</span><span class="fu">has</span>(<span class="st">&#39;keyword&#39;</span>)<span class="op">;</span></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="kw">this</span><span class="op">.</span><span class="at">isSearchActive</span>) {</span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="fu">handleSearchProducts</span>()<span class="op">;</span></span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="fu">handleListProducts</span>()<span class="op">;</span></span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">handleListProducts</span>() {</span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">//check if &quot;id&quot; parameter is available</span></span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> hascategoryId<span class="op">:</span> <span class="dt">boolean</span> <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="at">route</span><span class="op">.</span><span class="at">snapshot</span><span class="op">.</span><span class="at">paramMap</span><span class="op">.</span><span class="fu">has</span>(<span class="st">&#39;id&#39;</span>)<span class="op">;</span></span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (hascategoryId) {</span>
+<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a>      <span class="co">// get the &quot;id&quot; parameter and converting to number using &quot;+&quot; symbol</span></span>
+<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">currentCategoryId</span> <span class="op">=</span> <span class="op">+</span><span class="kw">this</span><span class="op">.</span><span class="at">route</span><span class="op">.</span><span class="at">snapshot</span><span class="op">.</span><span class="at">paramMap</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;id&#39;</span>)<span class="op">;</span></span>
+<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a>      <span class="co">// if no category id available, default set to 1</span></span>
+<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">currentCategoryId</span> <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">productService</span></span>
+<span id="cb42-36"><a href="#cb42-36" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">getProductsByCategory</span>(<span class="kw">this</span><span class="op">.</span><span class="at">currentCategoryId</span>)</span>
+<span id="cb42-37"><a href="#cb42-37" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">subscribe</span>((data) <span class="kw">=&gt;</span> {</span>
+<span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">products</span> <span class="op">=</span> data<span class="op">;</span></span>
+<span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a>      })<span class="op">;</span></span>
+<span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb42-41"><a href="#cb42-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-42"><a href="#cb42-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">handleSearchProducts</span>() {</span>
+<span id="cb42-43"><a href="#cb42-43" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> keyword<span class="op">:</span> <span class="dt">string</span> <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="at">route</span><span class="op">.</span><span class="at">snapshot</span><span class="op">.</span><span class="at">paramMap</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;keyword&#39;</span>)<span class="op">;</span></span>
+<span id="cb42-44"><a href="#cb42-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-45"><a href="#cb42-45" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">productService</span><span class="op">.</span><span class="fu">searchProducts</span>(keyword)<span class="op">.</span><span class="fu">subscribe</span>((data) <span class="kw">=&gt;</span> {</span>
+<span id="cb42-46"><a href="#cb42-46" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">products</span> <span class="op">=</span> data<span class="op">;</span></span>
+<span id="cb42-47"><a href="#cb42-47" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb42-48"><a href="#cb42-48" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb42-49"><a href="#cb42-49" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong><em>product-list.component.html</em></strong> - Added 404
+product not found message</p>
+<div class="sourceCode" id="cb43"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- if products empty then display a message--&gt;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">*ngIf</span><span class="ot">=</span><span class="st">&quot;products?.length == 0&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;alert alert-warning col-md-12&quot;</span> <span class="er">role</span><span class="ot">=</span><span class="st">&quot;alert&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    No products found for given keyword.</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div>
+<p>Snapshot :</p>
+<p><img src="images/feature2.0_searchKeyword.png" alt="feature2.0_searchKeyword" style="zoom:67%;" /></p>
+<h3 id="product-detail-page"><strong>Product Detail Page</strong></h3>
+<p>Development Process</p>
+<ol type="1">
+<li><p>Create new component for product details :
+<code>ng g c components/ProductDetails</code></p></li>
+<li><p>Add new Angular route for product details</p></li>
+<li><p>Add router links to the product-list-grid HTML page</p></li>
+<li><p>Enhance ProductDetailsComponent to retrieve product from
+ProductService</p></li>
+<li><p>Update ProductService to call URL on Spring Boot app</p></li>
+<li><p>Update HTML page for ProductDetailsComponent to display product
+details</p></li>
+</ol>
+<p><strong><em>product.ts</em></strong> - added id in model</p>
+<div class="sourceCode" id="cb44"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> Product {</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong><em>app-routing.module.ts</em></strong></p>
+<div class="sourceCode" id="cb45"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>{ path<span class="op">:</span> <span class="st">&#39;products/:id&#39;</span><span class="op">,</span> component<span class="op">:</span> ProductDetailsComponent }<span class="op">,</span></span></code></pre></div>
+<p><strong><em>product-list.component.html</em></strong></p>
+<div class="sourceCode" id="cb46"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;product-box&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;a</span> <span class="er">routerLink</span><span class="ot">=</span><span class="st">&quot;/products/{{product.id}}&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;img</span> <span class="er">src</span><span class="ot">=</span><span class="st">&quot;{{ product.imageUrl }}&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;img-responsive&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/a&gt;</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;a</span> <span class="er">routerLink</span><span class="ot">=</span><span class="st">&quot;/products/{{product.id}}&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;h1&gt;</span>{{ product.name }}<span class="kw">&lt;/h1&gt;</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/a&gt;</span></span></code></pre></div>
+<p><strong><em>product.service.ts</em></strong></p>
+<div class="sourceCode" id="cb47"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getProduct</span>(theProductId<span class="op">:</span> <span class="dt">number</span>)<span class="op">:</span> Observable<span class="op">&lt;</span>Product<span class="op">&gt;</span> {</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> productUrl <span class="op">=</span> <span class="vs">`</span><span class="sc">${</span>environment<span class="op">.</span><span class="at">apiServerUrl</span><span class="sc">}</span><span class="vs">/products/</span><span class="sc">${</span>theProductId<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">http</span><span class="op">.</span><span class="fu">get</span><span class="op">&lt;</span>Product<span class="op">&gt;</span>(productUrl)<span class="op">;</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong><em>product-details.component.html</em></strong></p>
+<div class="sourceCode" id="cb48"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;detail-section&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;container-fluid&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;img</span> <span class="er">src</span><span class="ot">=</span><span class="st">&quot;{{ product.imageUrl }}&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;detail-img&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;h3&gt;</span>{{ product.name }}<span class="kw">&lt;/h3&gt;</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;price&quot;</span><span class="kw">&gt;</span>{{ product.unitPrice | currency:&#39;USD&#39; }}<span class="kw">&lt;/div&gt;</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">&quot;#&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;primary-btn&quot;</span><span class="kw">&gt;</span>Add to cart<span class="kw">&lt;/a&gt;</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;hr&gt;</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;h4&gt;</span>Description<span class="kw">&lt;/h4&gt;</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;p&gt;</span>{{ product.description }}<span class="kw">&lt;/p&gt;</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;a</span> <span class="er">routerLink</span><span class="ot">=</span><span class="st">&quot;/products&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;mt-5&quot;</span><span class="kw">&gt;</span>Back to Product List<span class="kw">&lt;/a&gt;</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div>
+<p><strong><em>product-details.component.css</em></strong></p>
+<div class="sourceCode" id="cb49"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.detail-img</span>{</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">width</span>: <span class="dv">300</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong><em>product-details.component.ts</em></strong></p>
+<div class="sourceCode" id="cb50"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> ProductDetailsComponent <span class="kw">implements</span> OnInit {</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    product<span class="op">:</span> Product <span class="op">=</span> <span class="kw">new</span> <span class="fu">Product</span>()<span class="op">;</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constructor</span>(<span class="kw">private</span> productService<span class="op">:</span> ProductService<span class="op">,</span> <span class="kw">private</span> route<span class="op">:</span> ActivatedRoute ) {}</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ngOnInit</span>()<span class="op">:</span> <span class="dt">void</span> { <span class="kw">this</span><span class="op">.</span><span class="fu">getProduct</span>()<span class="op">;</span>}</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">getProduct</span>() {</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> theProductId<span class="op">:</span> <span class="dt">number</span> <span class="op">=</span> <span class="op">+</span><span class="kw">this</span><span class="op">.</span><span class="at">route</span><span class="op">.</span><span class="at">snapshot</span><span class="op">.</span><span class="at">paramMap</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;id&#39;</span>)<span class="op">;</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">productService</span><span class="op">.</span><span class="fu">getProduct</span>(theProductId)<span class="op">.</span><span class="fu">subscribe</span>((data) <span class="kw">=&gt;</span> {</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>            <span class="kw">this</span><span class="op">.</span><span class="at">product</span> <span class="op">=</span> data<span class="op">;</span> })<span class="op">;</span></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Snapshot</p>
+<p><img src="images/feature2.0_ProductDetail.png" alt="feature 2.0 Product Detail" style="zoom:67%;" /></p>
+<h2 id="pagination"><strong>Pagination</strong></h2>
+<ul>
+<li>Pagination is useful for handling large amounts of data</li>
+<li>Show the users a small subset of data: “page” of data</li>
+<li>The user can click links to view other pages</li>
+</ul>
+<h4 id="pagination---backend">Pagination - Backend</h4>
+<ul>
+<li><em>Spring Data REST provides pagination support out of the
+box</em></li>
+<li>By default, Spring Data REST returns: 20 elements</li>
+<li>We can customize this by passing in parameters</li>
+</ul>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>page</td>
+<td>The page number to access. 0-based … defaults to 0</td>
+</tr>
+<tr class="even">
+<td>size</td>
+<td>The size of the page to return (items per page). Defaults to 20</td>
+</tr>
+</tbody>
+</table>
+<p>So if we go to <a
+href="https://cartify-ecommerce-fullstack.herokuapp.com/api/products/?page=0&amp;size=10">/products/?page=0&amp;size=10</a></p>
+<p>It will return first page of 10 elements. And in response JSON, we
+can find below metadata :</p>
+<div class="sourceCode" id="cb51"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;_embedded&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;products&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="er">...</span> <span class="ot">]</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;_links&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">...</span> <span class="fu">},</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;page&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span>             <span class="er">//</span> <span class="er">Current</span> <span class="er">page</span> <span class="er">element</span> <span class="er">size</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;totalElements&quot;</span><span class="fu">:</span> <span class="dv">101</span><span class="fu">,</span>   <span class="er">//</span> <span class="er">count</span> <span class="er">of</span> <span class="er">total</span> <span class="er">elements</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;totalPages&quot;</span><span class="fu">:</span> <span class="dv">11</span><span class="fu">,</span>       <span class="er">//</span> <span class="er">total</span> <span class="er">pages</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;number&quot;</span><span class="fu">:</span> <span class="dv">0</span>             <span class="er">//</span> <span class="er">Current</span> <span class="er">Page</span> <span class="er">Number</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="pagination---frontend">Pagination - Frontend</h4>
+<p>We will use <a
+href="https://ng-bootstrap.github.io/">ng-bootstrap</a> for the
+same.</p>
+<p><strong>Pagination component</strong></p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 79%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>page</td>
+<td>The page number to access. 1-based … defaults to 1</td>
+</tr>
+<tr class="even">
+<td>pageSize</td>
+<td>The size of the page (items per page). Defaults to 10</td>
+</tr>
+<tr class="odd">
+<td>collectionSize</td>
+<td>The total number of items</td>
+</tr>
+<tr class="even">
+<td>pageChange</td>
+<td>Event handler for page change events</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Development Process</strong></p>
+<ol type="1">
+<li><p>Install ng-bootstrap -&gt; <code>ng add @angular/localize</code>,
+<code>npm install @ng-bootstrap/ng-bootstrap</code> (10.0.0) ,
+<code>npm install @popperjs/core</code></p></li>
+<li><p><strong>Refactor the interface for:
+GetResponseProducts</strong></p>
+<p>The response meta data coming from backend also has valuable
+information for pagination. Spring REST Provide pagination out of the
+box.</p>
+<div class="sourceCode" id="cb52"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;&lt;</span> array <span class="kw">of</span> products <span class="op">&gt;&gt;</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;page&quot;</span> <span class="op">:</span> {</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;size&quot;</span> <span class="op">:</span> <span class="dv">20</span><span class="op">,</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;totalElements&quot;</span> <span class="op">:</span> <span class="dv">100</span><span class="op">,</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;totalPages&quot;</span> <span class="op">:</span> <span class="dv">5</span><span class="op">,</span>    <span class="co">// Total pages available</span></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;number&quot;</span> <span class="op">:</span> <span class="dv">0</span> <span class="co">// Current page number</span></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong><em>product.service.ts</em></strong> - GetResponseProducts
+interface Maps JSON data from REST API to our TypeScript objects</p>
+<div class="sourceCode" id="cb53"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> GetResponseProducts {</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  _embedded<span class="op">:</span> {</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>    products<span class="op">:</span> Product[]<span class="op">;</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  page<span class="op">:</span> {</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>    size<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>    totalElements<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>    totalPages<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>    number<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p><strong>Add pagination support to ProductService</strong></p>
+<p><strong><em>product.service.ts</em></strong> - Getting products based
+on Category Id, Page number and Page size</p>
+<div class="sourceCode" id="cb54"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a> <span class="co">// Getting products based on Category Id, Page number and Page size</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="fu">getProductsByCategoryPaginate</span>(page<span class="op">:</span> <span class="dt">number</span><span class="op">,</span> pageSize<span class="op">:</span> <span class="dt">number</span><span class="op">,</span> currentCategoryId<span class="op">:</span> <span class="dt">number</span>)<span class="op">:</span> Observable<span class="op">&lt;</span>GetResponseProducts<span class="op">&gt;</span> {</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> url <span class="op">=</span> <span class="vs">`</span><span class="sc">${</span>environment<span class="op">.</span><span class="at">apiServerUrl</span><span class="sc">}</span><span class="vs">/products/search/findByCategoryId/?id=</span><span class="sc">${</span>currentCategoryId<span class="sc">}</span><span class="vs">&amp;page=</span><span class="sc">${</span>page<span class="sc">}</span><span class="vs">&amp;size=</span><span class="sc">${</span>pageSize<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">http</span><span class="op">.</span><span class="fu">get</span><span class="op">&lt;</span>GetResponseProducts<span class="op">&gt;</span>(url)<span class="op">;</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div></li>
+<li><p><strong>Update ProductListComponent to handle
+pagination</strong></p>
+<p><strong><em>product-list.component.ts</em></strong> - Getting
+products based on Category Id, Page number and Page size</p>
+<div class="sourceCode" id="cb55"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> ProductListComponent <span class="kw">implements</span> OnInit {</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// new properties for pagination</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    thePageNumber<span class="op">:</span> <span class="dt">number</span> <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>    thePageSize<span class="op">:</span> <span class="dt">number</span> <span class="op">=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>    theTotalElements<span class="op">:</span> <span class="dt">number</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">handleListProducts</span>() {</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">...</span></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">// now get the products for the given category id</span></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// frontend pagination starts from pageNumber = 1, for backend its 0, thatswhy substracting by 1 to send to backend</span></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">productService</span><span class="op">.</span><span class="fu">getProductsByCategoryPaginate</span>(</span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>            <span class="kw">this</span><span class="op">.</span><span class="at">thePageNumber</span> <span class="op">-</span> <span class="dv">1</span><span class="op">,</span></span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>            <span class="kw">this</span><span class="op">.</span><span class="at">thePageSize</span><span class="op">,</span></span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>            <span class="kw">this</span><span class="op">.</span><span class="at">currentCategoryId</span></span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">subscribe</span>(<span class="kw">this</span><span class="op">.</span><span class="fu">processResult</span>())<span class="op">;</span></span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">processResult</span>() {</span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (data) <span class="kw">=&gt;</span> {</span>
+<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a>            <span class="kw">this</span><span class="op">.</span><span class="at">products</span> <span class="op">=</span> data<span class="op">.</span><span class="at">_embedded</span><span class="op">.</span><span class="at">products</span><span class="op">;</span></span>
+<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a>            <span class="co">// frontend pagination starts from pageNumber = 1, for backend its 0, thatswhy adding by 1 to show in UI</span></span>
+<span id="cb55-23"><a href="#cb55-23" aria-hidden="true" tabindex="-1"></a>            <span class="kw">this</span><span class="op">.</span><span class="at">thePageNumber</span> <span class="op">=</span> data<span class="op">.</span><span class="at">page</span><span class="op">.</span><span class="at">number</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb55-24"><a href="#cb55-24" aria-hidden="true" tabindex="-1"></a>            <span class="kw">this</span><span class="op">.</span><span class="at">thePageSize</span> <span class="op">=</span> data<span class="op">.</span><span class="at">page</span><span class="op">.</span><span class="at">size</span><span class="op">;</span></span>
+<span id="cb55-25"><a href="#cb55-25" aria-hidden="true" tabindex="-1"></a>            <span class="kw">this</span><span class="op">.</span><span class="at">theTotalElements</span> <span class="op">=</span> data<span class="op">.</span><span class="at">page</span><span class="op">.</span><span class="at">totalElements</span><span class="op">;</span></span>
+<span id="cb55-26"><a href="#cb55-26" aria-hidden="true" tabindex="-1"></a>        }<span class="op">;</span></span>
+<span id="cb55-27"><a href="#cb55-27" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb55-28"><a href="#cb55-28" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p><strong>Enhance HTML template to use ng-bootstrap pagination
+component</strong></p>
+<p><strong><em>product-list.component.html</em></strong> - Getting
+products based on Category Id, Page number and Page size</p>
+<div class="sourceCode" id="cb56"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Footer Pagination starts --&gt;</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;footer-pagination&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;row&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;col-md-6&quot;</span><span class="kw">&gt;&lt;/div&gt;</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;col-md-6&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>            <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;row&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>                <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;col-md-9&quot;</span> <span class="er">style</span><span class="ot">=</span><span class="st">&quot;padding-left: 30%&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">&lt;ngb-pagination</span> <span class="er">[(page)]</span><span class="ot">=</span><span class="st">&quot;thePageNumber&quot;</span> </span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a><span class="ot">                                    [pageSize]=</span><span class="st">&quot;thePageSize&quot;</span></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a><span class="ot">                                    [collectionSize]=</span><span class="st">&quot;theTotalElements&quot;</span> </span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a><span class="ot">                                    (pageChange)=</span><span class="st">&quot;listProducts()&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">&lt;/ngb-pagination&gt;</span></span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>                <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>                <span class="co">&lt;!-- Change Page Size from UI --&gt;</span></span>
+<span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a>                <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;col-md-3 mt-2&quot;</span> <span class="er">style</span><span class="ot">=</span><span class="st">&quot;text-align: right;&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb56-20"><a href="#cb56-20" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">&lt;span</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;mr-2&quot;</span><span class="kw">&gt;</span>Page Size<span class="kw">&lt;/span&gt;</span></span>
+<span id="cb56-21"><a href="#cb56-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-22"><a href="#cb56-22" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">&lt;select</span> <span class="er">(change)</span><span class="ot">=</span><span class="st">&quot;updatePageSize($event)&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb56-23"><a href="#cb56-23" aria-hidden="true" tabindex="-1"></a>                        <span class="kw">&lt;option</span> <span class="er">selected</span><span class="ot">=</span><span class="st">&quot;true&quot;</span><span class="kw">&gt;</span>5<span class="kw">&lt;/option&gt;</span></span>
+<span id="cb56-24"><a href="#cb56-24" aria-hidden="true" tabindex="-1"></a>                        <span class="kw">&lt;option&gt;</span>10<span class="kw">&lt;/option&gt;</span></span>
+<span id="cb56-25"><a href="#cb56-25" aria-hidden="true" tabindex="-1"></a>                        <span class="kw">&lt;option&gt;</span>20<span class="kw">&lt;/option&gt;</span></span>
+<span id="cb56-26"><a href="#cb56-26" aria-hidden="true" tabindex="-1"></a>                        <span class="kw">&lt;option&gt;</span>50<span class="kw">&lt;/option&gt;</span></span>
+<span id="cb56-27"><a href="#cb56-27" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">&lt;/select&gt;</span></span>
+<span id="cb56-28"><a href="#cb56-28" aria-hidden="true" tabindex="-1"></a>                <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb56-29"><a href="#cb56-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-30"><a href="#cb56-30" aria-hidden="true" tabindex="-1"></a>            <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb56-31"><a href="#cb56-31" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb56-32"><a href="#cb56-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-33"><a href="#cb56-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb56-34"><a href="#cb56-34" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span>
+<span id="cb56-35"><a href="#cb56-35" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Footer Pagination ends --&gt;</span></span></code></pre></div></li>
+<li><p><strong>Pagination - Change PageSize fron frontend</strong></p>
+<p>HTML Change is already added in above code block.</p>
+<p><strong><em>product-list.component.ts</em></strong> - writing
+<code>updatePageSize()</code> method</p>
+<div class="sourceCode" id="cb57"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">updatePageSize</span>(event<span class="op">:</span> <span class="bu">Event</span>) {</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">thePageSize</span> <span class="op">=</span> <span class="pp">parseInt</span>((<span class="bu">event</span><span class="op">.</span><span class="at">target</span> <span class="im">as</span> <span class="bu">HTMLInputElement</span>)<span class="op">.</span><span class="at">value</span>)<span class="op">;</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">thePageNumber</span> <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">listProducts</span>()<span class="op">;</span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p><strong>Similarly activate pagination in
+SearchProducts</strong></p>
+<p><strong><em>product.service.ts</em></strong> - Getting products based
+on Category Id, Page number and Page size</p>
+<div class="sourceCode" id="cb58"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">searchProductsPaginate</span>(page<span class="op">:</span> <span class="dt">number</span><span class="op">,</span> pageSize<span class="op">:</span> <span class="dt">number</span><span class="op">,</span> keyword<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> Observable<span class="op">&lt;</span>GetResponseProducts<span class="op">&gt;</span> {</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> searchUrl <span class="op">=</span> <span class="vs">`</span><span class="sc">${</span>environment<span class="op">.</span><span class="at">apiServerUrl</span><span class="sc">}</span><span class="vs">/products/search/findByNameContainingIgnoreCase?name=</span><span class="sc">${</span>keyword<span class="sc">}</span><span class="vs">&amp;page=</span><span class="sc">${</span>page<span class="sc">}</span><span class="vs">&amp;size=</span><span class="sc">${</span>pageSize<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">http</span><span class="op">.</span><span class="fu">get</span><span class="op">&lt;</span>GetResponseProducts<span class="op">&gt;</span>(searchUrl)<span class="op">;</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<p><strong><em>product-list.component.ts</em></strong> - writing
+<code>updatePageSize()</code> method</p>
+<div class="sourceCode" id="cb59"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handleSearchProducts</span>() {</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> keyword<span class="op">:</span> <span class="dt">string</span> <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="at">route</span><span class="op">.</span><span class="at">snapshot</span><span class="op">.</span><span class="at">paramMap</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;keyword&#39;</span>)<span class="op">;</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">productService</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">searchProductsPaginate</span>(<span class="kw">this</span><span class="op">.</span><span class="at">thePageNumber</span> <span class="op">-</span> <span class="dv">1</span><span class="op">,</span> <span class="kw">this</span><span class="op">.</span><span class="at">thePageSize</span><span class="op">,</span> keyword)</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">subscribe</span>(<span class="kw">this</span><span class="op">.</span><span class="fu">processResult</span>())<span class="op">;</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+</ol>
+<p><strong>Snapshot</strong></p>
+<p><img src="images/feature2.0_Pagination.png" alt="feature2.0_Pagination" style="zoom:67%;" /></p>
+<h2 id="shopping-cart">Shopping Cart</h2>
         </div>
       </div>
     </div>

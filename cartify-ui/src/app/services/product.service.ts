@@ -25,15 +25,26 @@ export class ProductService {
     const url = `${environment.apiServerUrl}/products`;
     return this.getProductResponse(url);
   }
+  
+  // public getProductsByCategory(currentCategoryId: number): Observable<Product[]> {
+  //   const url = `${environment.apiServerUrl}/products/search/findByCategoryId/?id=${currentCategoryId}`;
+  //   return this.getProductResponse(url);
+  // }
 
-  public getProductsByCategory(currentCategoryId: number): Observable<Product[]> {
-    const url = `${environment.apiServerUrl}/products/search/findByCategoryId/?id=${currentCategoryId}`;
-    return this.getProductResponse(url);
+  // Getting products based on Category Id, Page number and Page size
+  public getProductsByCategoryPaginate(page: number, pageSize: number, currentCategoryId: number): Observable<GetResponseProducts> {
+    const url = `${environment.apiServerUrl}/products/search/findByCategoryId/?id=${currentCategoryId}&page=${page}&size=${pageSize}`;
+    return this.http.get<GetResponseProducts>(url);
   }
 
-  searchProducts(keyword: string): Observable<Product[]> {
-    const searchUrl = `${environment.apiServerUrl}/products/search/findByNameContainingIgnoreCase?name=${keyword}`;
-    return this.getProductResponse(searchUrl);
+  // searchProducts(keyword: string): Observable<Product[]> {
+  //   const searchUrl = `${environment.apiServerUrl}/products/search/findByNameContainingIgnoreCase?name=${keyword}`;
+  //   return this.getProductResponse(searchUrl);
+  // }
+
+  searchProductsPaginate(page: number, pageSize: number, keyword: string): Observable<GetResponseProducts> {
+    const searchUrl = `${environment.apiServerUrl}/products/search/findByNameContainingIgnoreCase?name=${keyword}&page=${page}&size=${pageSize}`;
+    return this.http.get<GetResponseProducts>(searchUrl);
   }
 
   getProduct(theProductId: number): Observable<Product> {
@@ -54,6 +65,12 @@ export class ProductService {
 interface GetResponseProducts {
   _embedded: {
     products: Product[];
+  };
+  page: {
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    number: number;
   };
 }
 

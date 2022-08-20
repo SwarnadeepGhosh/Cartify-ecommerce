@@ -53,7 +53,9 @@
 
 
 
-## **Backend 1.0**
+---
+
+# **Backend 1.0**
 
 **Development Process Backend - Release 1.0**
 
@@ -362,7 +364,7 @@ http://localhost:8080/api/product-category -- To check all categories
 
 ---
 
-## **Frontend 1.0**
+# **Frontend 1.0**
 
 **Development Process Frontend - Release 1.0**
 
@@ -532,9 +534,9 @@ export class ProductListComponent implements OnInit {
 
 
 
+---
 
-
-## **Release 2.0**
+# **Release 2.0**
 
 - Online Shop Template Integration
 
@@ -625,7 +627,7 @@ Snapshot
 
 
 
-### Find by Category
+### FindByCategory
 
 **Development Process**
 
@@ -770,7 +772,7 @@ Snapshot
 
 
 
-### FindBy Category Dynamically
+### FindByCategory Dynamically
 
 **Development Process**
 
@@ -933,7 +935,7 @@ export class ProductCategoryMenuComponent implements OnInit {
 
 
 
-### Search Product by Keyword
+### SearchProduct by Keyword
 
 **Development Process**
 
@@ -1196,6 +1198,254 @@ export class ProductDetailsComponent implements OnInit {
 Snapshot
 
 <img src="images/feature2.0_ProductDetail.png" alt="feature 2.0 Product Detail" style="zoom:67%;" />
+
+
+
+
+
+## **Pagination**
+
+- Pagination is useful for handling large amounts of data 
+- Show the users a small subset of data: "page" of data 
+- The user can click links to view other pages
+
+
+
+#### Pagination - Backend
+
+- *Spring Data REST provides pagination support out of the box*
+- By default, Spring Data REST returns: 20 elements 
+- We can customize this by passing in parameters
+
+| Parameter | Purpose                                                      |
+| --------- | ------------------------------------------------------------ |
+| page      | The page number to access. 0-based ... defaults to 0         |
+| size      | The size of the page to return (items per page). Defaults to 20 |
+
+
+
+So if we go to [/products/?page=0&size=10](https://cartify-ecommerce-fullstack.herokuapp.com/api/products/?page=0&size=10)
+
+It will return first page of 10 elements. And in response JSON, we can find below metadata : 
+
+```json
+{
+    "_embedded": {
+        "products": [ ... ]
+    },
+    "_links": { ... },
+    "page": {
+        "size": 10, 			// Current page element size
+        "totalElements": 101,	// count of total elements
+        "totalPages": 11,		// total pages
+        "number": 0 			// Current Page Number
+    }
+}
+```
+
+
+
+
+
+#### Pagination - Frontend
+
+We will use [ng-bootstrap](https://ng-bootstrap.github.io/) for the same.
+
+**Pagination component**
+
+| Parameter      | Purpose                                               |
+| -------------- | ----------------------------------------------------- |
+| page           | The page number to access. 1-based ... defaults to 1  |
+| pageSize       | The size of the page (items per page). Defaults to 10 |
+| collectionSize | The total number of items                             |
+| pageChange     | Event handler for page change events                  |
+
+
+
+**Development Process**
+
+1. Install ng-bootstrap -> `ng add @angular/localize`, `npm install @ng-bootstrap/ng-bootstrap` (10.0.0) , `npm install @popperjs/core`
+
+2. **Refactor the interface for: GetResponseProducts**
+
+   The response meta data coming from backend also has valuable information for pagination. Spring REST Provide pagination out of the box. 
+
+   ```typescript
+   << array of products >>
+       ...
+       "page" : {
+       "size" : 20,
+       "totalElements" : 100,
+       "totalPages" : 5,	// Total pages available
+       "number" : 0	// Current page number
+   }
+   ```
+
+   
+
+   ***product.service.ts*** - GetResponseProducts interface Maps JSON data from REST API to our TypeScript objects
+
+   ```typescript
+   interface GetResponseProducts {
+     _embedded: {
+       products: Product[];
+     };
+     page: {
+       size: number;
+       totalElements: number;
+       totalPages: number;
+       number: number;
+     };
+   }
+   ```
+
+   
+
+3. **Add pagination support to ProductService**
+
+   ***product.service.ts*** - Getting products based on Category Id, Page number and Page size
+
+   ```typescript
+    // Getting products based on Category Id, Page number and Page size
+     public getProductsByCategoryPaginate(page: number, pageSize: number, currentCategoryId: number): Observable<GetResponseProducts> {
+       const url = `${environment.apiServerUrl}/products/search/findByCategoryId/?id=${currentCategoryId}&page=${page}&size=${pageSize}`;
+       return this.http.get<GetResponseProducts>(url);
+     }
+   ```
+
+   
+
+4. **Update ProductListComponent to handle pagination**
+
+   ***product-list.component.ts*** - Getting products based on Category Id, Page number and Page size
+
+   ```typescript
+   export class ProductListComponent implements OnInit {
+       // new properties for pagination
+       thePageNumber: number = 1;
+       thePageSize: number = 10;
+       theTotalElements: number = 0;
+       ...
+       handleListProducts() {
+           ...
+           // now get the products for the given category id
+           // frontend pagination starts from pageNumber = 1, for backend its 0, thatswhy substracting by 1 to send to backend
+           this.productService.getProductsByCategoryPaginate(
+               this.thePageNumber - 1,
+               this.thePageSize,
+               this.currentCategoryId
+           )
+               .subscribe(this.processResult());
+       }
+   
+       processResult() {
+           return (data) => {
+               this.products = data._embedded.products;
+               // frontend pagination starts from pageNumber = 1, for backend its 0, thatswhy adding by 1 to show in UI
+               this.thePageNumber = data.page.number + 1;
+               this.thePageSize = data.page.size;
+               this.theTotalElements = data.page.totalElements;
+           };
+       }
+   }
+   ```
+
+   
+
+5. **Enhance HTML template to use ng-bootstrap pagination component**
+
+   ***product-list.component.html*** - Getting products based on Category Id, Page number and Page size
+
+   ```html
+   <!-- Footer Pagination starts -->
+   <div class="footer-pagination">
+       <div class="row">
+           <div class="col-md-6"></div>
+   
+           <div class="col-md-6">
+               <div class="row">
+                   <div class="col-md-9" style="padding-left: 30%">
+   
+                       <ngb-pagination [(page)]="thePageNumber" 
+                                       [pageSize]="thePageSize"
+                                       [collectionSize]="theTotalElements" 
+                                       (pageChange)="listProducts()">
+                       </ngb-pagination>
+   
+                   </div>
+                               
+                   <!-- Change Page Size from UI -->
+                   <div class="col-md-3 mt-2" style="text-align: right;">
+                       <span class="mr-2">Page Size</span>
+   
+                       <select (change)="updatePageSize($event)">
+                           <option selected="true">5</option>
+                           <option>10</option>
+                           <option>20</option>
+                           <option>50</option>
+                       </select>
+                   </div>
+   
+               </div>
+           </div>
+   
+       </div>
+   </div>
+   <!-- Footer Pagination ends -->
+   ```
+
+   
+
+6. **Pagination - Change PageSize fron frontend**
+
+   HTML Change is already added in above code block.
+
+   ***product-list.component.ts*** - writing `updatePageSize()` method 
+
+   ```typescript
+   updatePageSize(event: Event) {
+       this.thePageSize = parseInt((event.target as HTMLInputElement).value);
+       this.thePageNumber = 1;
+       this.listProducts();
+   }
+   ```
+
+   
+
+7. **Similarly activate pagination in SearchProducts**
+
+   ***product.service.ts*** - Getting products based on Category Id, Page number and Page size
+
+   ```typescript
+   searchProductsPaginate(page: number, pageSize: number, keyword: string): Observable<GetResponseProducts> {
+       const searchUrl = `${environment.apiServerUrl}/products/search/findByNameContainingIgnoreCase?name=${keyword}&page=${page}&size=${pageSize}`;
+       return this.http.get<GetResponseProducts>(searchUrl);
+     }
+   ```
+
+   ***product-list.component.ts*** - writing `updatePageSize()` method 
+
+   ```typescript
+   handleSearchProducts() {
+       const keyword: string = this.route.snapshot.paramMap.get('keyword');
+   
+       this.productService
+           .searchProductsPaginate(this.thePageNumber - 1, this.thePageSize, keyword)
+           .subscribe(this.processResult());
+   }
+   ```
+
+
+
+**Snapshot**
+
+<img src="images/feature2.0_Pagination.png" alt="feature2.0_Pagination" style="zoom:67%;" />
+
+
+
+
+
+## Shopping Cart
 
 
 
