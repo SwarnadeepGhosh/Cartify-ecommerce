@@ -1453,7 +1453,9 @@ We will use [ng-bootstrap](https://ng-bootstrap.github.io/) for the same.
 
 
 
-## Shopping Cart
+---
+
+## **Shopping Cart**
 
 **Overview of Entire Shopping Cart Process**
 
@@ -1702,4 +1704,222 @@ We will use [ng-bootstrap](https://ng-bootstrap.github.io/) for the same.
 
 
 
-### Cart-Detail List
+### **Cart-Detail List**
+
+**Development Process**
+
+1. Create new component: CartDetailsComponent `ng generate component components/cart-details`
+
+2. Add new route for CartDetailsComponent
+
+   ***app-routing.module.ts***
+
+   ```typescript
+   const routes: Routes = [
+     { path: 'cart-details', component: CartDetailsComponent },
+       ...
+   ```
+
+3. Update link for Shopping Cart icon
+
+   ***cart-status.component.html***
+
+   ```html
+   <div class="cart-area d-n">
+       <a routerLink="/cart-details">
+           ...
+       </a>
+   </div>
+   ```
+
+   
+
+4. Modify CartDetailsComponent to retrieve cart items
+
+   ***cart-details.component.ts***
+
+   ```typescript
+   export class CartDetailsComponent implements OnInit {
+       cartItems: CartItem[] = [];
+       totalPrice: number = 0;
+       totalQuantity: number = 0;
+   
+       constructor(private cartService: CartService) {}
+   
+       ngOnInit() {
+           this.listCartDetails();
+       }
+   
+       listCartDetails() {
+           this.cartItems = this.cartService.cartItems; // get a handle to the cart items
+   
+           // subscribe to the cart totalPrice
+           this.cartService.totalPrice.subscribe((data) => (this.totalPrice = data));
+   
+           // subscribe to the cart totalQuantity
+           this.cartService.totalQuantity.subscribe(
+               (data) => (this.totalQuantity = data)
+           );
+   
+           this.cartService.computeCartTotals(); // compute cart total price and total quantity
+       }
+   }
+   
+   ```
+
+   
+
+5. Add HTML template for CartDetailsComponent
+
+   ***cart-details.component.html***
+
+   ```html
+   <div class="main-content">
+       <div class="section-content section-content-p30">
+           <div class="container-fluid">
+   
+               <div *ngIf="cartItems.length > 0">
+   
+                   <table class="table table-bordered">
+   
+                       <tr>
+                           <th width="20%">Product Image</th>
+                           <th width="50%">Product Detail</th>
+                           <th width="30%"></th>
+                       </tr>
+   
+                       <tr *ngFor="let tempCartItem of cartItems">
+                           <td>
+                               <img src="{{ tempCartItem.imageUrl }}" class="img-responsive" width="150px" />
+                           </td>
+                           <td>
+                               <p>{{ tempCartItem.name }}</p>
+                               <p>{{ tempCartItem.unitPrice | currency:'USD' }} </p>
+                           </td>
+                           <td>
+                               <div class="items">
+                                   <label>Quantity:</label>
+   
+                                   <div class="row no-gutters">
+                                       <div class="col p-1">
+                                           <button (click)="incrementQuantity(tempCartItem)"
+                                                   class="btn btn-success btn-sm"><i class="fas fa-plus"></i></button>
+   
+                                       </div>
+                                       <div class="col ml-4 mr-2 p-1">
+                                           {{ tempCartItem.quantity }}
+                                       </div>
+                                       <div class="col p-1">
+                                           <button (click)="decrementQuantity(tempCartItem)"
+                                                   class="btn btn-info btn-sm"><i class="fas fa-minus"></i></button>
+                                       </div>
+   
+                                       <div class="col p-1">
+                                           <button (click)="remove(tempCartItem)" class="btn btn-danger btn-sm">Remove</button>
+                                       </div>
+                                   </div>
+   
+                               </div>
+   
+                               <p class="mt-2">Subtotal: {{ tempCartItem.quantity * tempCartItem.unitPrice | currency:
+                                   'USD' }}
+                               </p>
+                           </td>
+                       </tr>
+                       <tr>
+                           <td colspan="2"></td>
+                           <td style="font-weight: bold">
+                               <p>Total Quantity: {{ totalQuantity }}</p>
+                               <p>Shipping: FREE</p>
+                               <p>Total Price: {{ totalPrice | currency: 'USD' }}</p>
+                           </td>
+                       </tr>
+   
+                   </table>
+   
+               </div>
+   
+               <div *ngIf="cartItems.length == 0" class="alert alert-warning col-md-12" role="alert">
+                   Your shopping Cart is empty. Please add something.
+               </div>
+   
+           </div>
+       </div>
+   </div>
+   ```
+
+   
+
+**Adding Increment,Decrement,Remove feature in Cart Item**
+
+Development Process
+
+1. Modify CartDetailsComponent HTML template
+
+   - Add the "increment, decrement, remove" button *-- (Already added in above component html code)*
+
+   - Add click handler for the "increment, decrement, remove" button on HTML template  *-- (Already added in above component html code)*
+
+     
+
+2. Update CartDetailsComponent with click handler method for increment, decrement and remove
+
+   ***cart-details.component.ts***
+
+   ```typescript
+   incrementQuantity(theCartItem: CartItem) {
+       this.cartService.addToCart(theCartItem);
+   }
+   
+   decrementQuantity(theCartItem: CartItem) {
+       this.cartService.decrementQuantity(theCartItem);
+   }
+   
+   remove(theCartItem: CartItem) {
+       this.cartService.remove(theCartItem);
+   }
+   ```
+
+3. Modify CartService with supporting method for decrementing and removing items
+
+   ***cart.service.ts*** - 
+
+   ```typescript
+   decrementQuantity(theCartItem: CartItem) {
+       theCartItem.quantity--;
+   
+       if (theCartItem.quantity === 0) {
+           this.remove(theCartItem);
+       } else {
+           this.computeCartTotals();
+       }
+   }
+   
+   remove(theCartItem: CartItem) {
+       // get index of item in the array
+       const itemIndex = this.cartItems.findIndex(
+           (tempCartItem) => tempCartItem.id == theCartItem.id
+       );
+   
+       // if found, remove the item from the array at the given index
+       if (itemIndex > -1) {
+           this.cartItems.splice(itemIndex, 1);
+           this.computeCartTotals();
+       }
+   }
+   
+   ```
+
+
+
+**Snapshot**
+
+<img src="images/feature2.0_cart-details.png" alt="feature2.0_cart-details" style="zoom:67%;" />
+
+
+
+
+
+---
+
+## **Checkout Form**

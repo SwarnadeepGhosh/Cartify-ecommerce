@@ -24,7 +24,8 @@ body{
     line-height:1.625;
     color:#666;
     -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale
+    -moz-osx-font-smoothing:grayscale;
+    margin-bottom: 45px!important;
 }
 
 ul{
@@ -769,10 +770,16 @@ footer ul li a{
     color:#fff
 }
 footer{
-    background:#232324;
-    z-index:1;
-    position:relative;
-    text-align:center
+    background: #232324;
+    z-index: 1;
+    position: fixed;
+    text-align: center;
+    width: 100%;
+    height: 45px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin-bottom: 0px;
 }
 footer ul{
     margin-bottom: 0;
