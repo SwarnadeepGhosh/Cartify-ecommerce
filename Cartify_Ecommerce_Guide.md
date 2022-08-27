@@ -6,6 +6,14 @@
 
 ## Introduction
 
+Download the Source Code and PDF Files
+
+**Download Source Code:** [https://github.com/darbyluv2code/fullstack-angular-and-springboot](https://github.com/darbyluv2code/fullstack-angular-and-springboot)
+
+**Download PDF Files** : All slides which are shown during the course are available also as a reference and can be downloaded here:
+
+[http://www.luv2code.com/download-full-stack-angular-and-springboot-pdf-slides](http://www.luv2code.com/download-full-stack-angular-and-springboot-pdf-slides)
+
 
 
 **Design Requirements - Backend**
@@ -1447,5 +1455,251 @@ We will use [ng-bootstrap](https://ng-bootstrap.github.io/) for the same.
 
 ## Shopping Cart
 
+**Overview of Entire Shopping Cart Process**
+
+1. Cart Status Component: on main page, display total price and quantity (With Add to Cart Functionality)
+
+2. Cart Details Page: list the items in the cart
+
+3. Cart Details Page: add / remove items
+
+4. Checkout Button
+
+5. Checkout Form
 
 
+
+### Cart Status Component
+
+#### **Development Process- Part 1**
+
+1. Create new component: CartStatusComponent `ng generate component components/cart-status`
+
+2. Add HTML template for CartStatusComponent
+
+   ***cart-status.component.html***
+
+   ```html
+   <div class="cart-area d-n">
+       <a href="shopping-detail.html">
+           <div class="total">{{ totalPrice | currency: 'USD' }}
+               <span> {{ totalQuantity }} </span>
+           </div>
+           <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+       </a>
+   </div>
+   ```
+
+3. Add click handler for "Add to cart" button
+
+   ***product-list.component.html***
+
+   ````html
+   <div *ngFor="let product of products" class="col-md-3">
+       ...
+       <!-- <a routerLink="/" class="primary-btn">Add to cart</a> -->	    <!-- Previous  -->
+       <button (click)="addToCart(product)" class="btn btn-primary btn-sm">Add to cart</button> <!-- Current  --> 
+       ...
+   </div>
+   ````
+
+4. Update ProductListComponent with click handler method
+
+   ***product-list.component.ts***
+
+   ```typescript
+   addToCart(product: Product){
+       console.log(`Adding to cart: ${product.name}, ${product.unitPrice}`);
+       // TODO .. do the real work
+       const theCartItem = new CartItem(product);
+       this.cartService.addToCart(theCartItem);
+   }
+   ```
+
+
+
+#### **Development Process- Part 2**
+
+1. Create model class: CartItem:  `ng g class common/cart-item`
+
+    ***cart-item.ts***
+
+   ```typescript
+   export class CartItem {
+     id: string;
+     name: string;
+     imageUrl: string;
+     unitPrice: number;
+     
+     quantity: number;
+   
+     constructor(product: Product) {
+       this.id = product.id;
+       this.name = product.name;
+       this.imageUrl = product.imageUrl;
+       this.unitPrice = product.unitPrice;
+   
+       this.quantity = 1;
+     }
+   }
+   ```
+
+   
+
+2. Develop CartService :  `ng g service services/cart`
+
+   ***cart-service.ts***
+
+   ```typescript
+   export class CartService {
+     cartItems: CartItem[] = [];
+   
+     // Subject is a subclass of Observable. We can use Subject to publish events in our code,
+     // The event will be sent to all of the subscribers
+     totalPrice: Subject<number> = new Subject<number>();
+     totalQuantity: Subject<number> = new Subject<number>();
+   
+     constructor() {}
+   
+     addToCart(theCartItem: CartItem) {
+       let alreadyExistsInCart: boolean = false; // check if we already have the item in our cart
+       let existingCartItem: CartItem = undefined;
+   
+       if (this.cartItems.length > 0) {
+         for (let tempCartItem of this.cartItems) {
+           if (tempCartItem.id === theCartItem.id) {
+             //find the item in the cart based on item id
+             existingCartItem = tempCartItem;
+             break;
+           }
+         }
+   
+         alreadyExistsInCart = existingCartItem != undefined; // check if we found it
+       }
+   
+       if (alreadyExistsInCart) {
+         existingCartItem.quantity++; // increment the quantity
+       } else {
+         this.cartItems.push(theCartItem); // just add the item to the array
+       }
+   
+       this.computeCartTotals(); // compute cart quantity and cart total
+     }
+   
+     computeCartTotals() {
+       let totalPriceValue: number = 0;
+       let totalQuantityValue: number = 0;
+   
+       for (let currentCartItem of this.cartItems) {
+         totalPriceValue += currentCartItem.quantity * currentCartItem.unitPrice;
+         totalQuantityValue += currentCartItem.quantity;
+       }
+   
+       // publish the new values ... all subscribers will receive the new data
+       this.totalPrice.next(totalPriceValue);
+       this.totalQuantity.next(totalQuantityValue);
+   
+       this.logCartData(totalPriceValue, totalQuantityValue);
+     }
+   
+     logCartData(totalPriceValue: number, totalQuantityValue: number) {
+       console.log("Contents of the Cart : ");
+       for(let tempCartItem of this.cartItems){
+         const subTotalPrice = tempCartItem.quantity * tempCartItem.unitPrice;
+         console.log(`name=${tempCartItem.name} , quantity=${tempCartItem.quantity}, unitPrice=${tempCartItem.unitPrice}, subTotalPrice=${subTotalPrice}`);
+       }
+       console.log(`totalPrice= ${totalPriceValue.toFixed(2)}, totalQuantity= ${totalQuantityValue}`);
+       console.log("-------");
+     }
+   
+   }
+   ```
+
+   
+
+3. Modify ProductListComponent to call CartService
+
+   ***product-list.component.ts***
+
+   ```typescript
+   addToCart(product: Product){
+       console.log(`Adding to cart: ${product.name}, ${product.unitPrice}`);
+       // TODO .. do the real work
+       const theCartItem = new CartItem(product);
+       this.cartService.addToCart(theCartItem);
+   }
+   ```
+
+
+
+4. Enhance CartStatusComponent to subscribe to CartService
+
+   ***cart-status.component.ts***
+
+   ```typescript
+   export class CartStatusComponent implements OnInit {
+     totalPrice: number = 0.0;
+     totalQuantity: number = 0;
+   
+     constructor(private cartService: CartService) {}
+     ngOnInit(): void {
+       this.updateCartStatus();
+     }
+   
+     updateCartStatus() {
+       // subscribe to the cart status totalPrice
+       this.cartService.totalPrice.subscribe((data) => (this.totalPrice = data));
+   
+       this.cartService.totalQuantity.subscribe(
+         (data) => (this.totalQuantity = data) // subscribe to the cart status totalQuantity
+       );
+     }
+   
+   }
+   ```
+
+5. Update CartStatusComponent HTML to display cart total price and quantity
+
+   ***cart-status.component.html***
+
+   ```html
+   <div class="total">{{ totalPrice | currency: 'USD' }}
+       <span>{{ totalQuantity }}</span>
+   </div>
+   ```
+
+   
+
+#### **Add to Cart- Product Details View**
+
+1. Add click handler for "Add to cart" button on product-details.component.html 
+
+   ***product-details.component.html***
+
+   ```html
+   <button (click)="addToCart()" class="btn btn-primary btn-sm">Add to cart</button>
+   ```
+
+2. Update ProductDetailsComponent with click handler method
+
+   ***product-details.component.ts***
+
+   ```typescript
+   addToCart() {
+       console.log(`Adding to cart: ${this.product.name}, ${this.product.unitPrice}`);
+       const theCartItem = new CartItem(this.product);
+       this.cartService.addToCart(theCartItem);
+   }
+   ```
+
+
+
+**Snapshot** : Add to Cart is working from all pages and cart status component is updating , also printing final cart status in console.
+
+<img src="images/feature2.0_CartStatusComponent.png" alt="feature2.0_CartStatusComponent" style="zoom:67%;" />
+
+
+
+
+
+### Cart-Detail List
