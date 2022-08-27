@@ -1923,3 +1923,235 @@ Development Process
 ---
 
 ## **Checkout Form**
+
+Angular provides two types of forms • Reactive forms • Template-driven forms.
+
+- Reactive forms - *We will use this.*
+
+  - Leverages programmatic API for form building
+
+  - Scaleable solution that is designed for large, complex forms
+
+  - Forms can be easily reused and tested
+
+- Template-driven forms
+
+  - Targeted for small, simple forms
+
+  - Not a scalable solution for large, complex forms
+
+| Name        | Description                                                  |
+| ----------- | ------------------------------------------------------------ |
+| FormControl | Individual control that tracks the value and validation status |
+| FormGroup   | A collection of controls. Can create nested groups.          |
+
+
+
+### Form Layout
+
+Development Process
+
+1. Generate our checkout component : `ng g c components/checkout`
+
+2. Add a new route for checkout component
+
+   ***app-routing.module.ts***
+
+   ```typescript
+   const routes: Routes = [
+       {path: 'checkout', component: CheckoutComponent},
+       ...
+   ```
+
+   
+
+3. Create a new checkout button and link to checkout component
+
+   ***cart-details.component.ts***
+
+   ```typescript
+   <a routerLink='/checkout' class="btn btn-primary">Checkout</a>
+   ```
+
+4. Add support for reactive forms
+
+   ***app.module.ts***
+
+   ```typescript
+   imports: [ ...
+       ReactiveFormsModule
+   ],
+   ```
+
+   
+
+5. Define form in component .ts file and add method to call on Form submit
+
+   ***checkout.component.ts***
+
+   ```typescript
+   export class CheckoutComponent implements OnInit {
+       checkoutFormGroup: FormGroup;
+       constructor(private formBuilder: FormBuilder) { }
+       ngOnInit(): void {
+           this.checkoutFormGroup = this.formBuilder.group({
+               customer: this.formBuilder.group({
+                   firstName: [''],
+                   lastName: [''],
+                   email: ['']
+               })
+               // Similarly we need to add other form elements like this
+           });
+       }
+       onSubmit() {
+           console.log("Handling the submit button");
+           console.log(this.checkoutFormGroup.get('customer').value);
+       }
+   }
+   ```
+
+   
+
+6. Layout form controls in HTML template
+
+   ***checkout.component.html***
+
+   ```html
+   <form [formGroup]="checkoutFormGroup" (ngSubmit)="onSubmit()">
+       <!-- customer form group -->
+       <div formGroupName="customer" class="form-area">
+           <h3>Customer</h3>
+           <div class="row">
+               <div class="col-md-2"> <label>First Name</label></div>
+               <input formControlName="firstName" type="text">
+           </div>
+           <!-- Similarly we need to add other form elements like this-->
+       </div>
+       <div class="text-center">
+           <button type="submit" class="btn btn-info">Purchase</button>
+       </div>
+       ...
+   </form>
+   ```
+
+> - Complete updated checkout component html file here : [GitHub Link](https://github.com/SwarnadeepGhosh/cartify-ecommerce/tree/master/cartify-ui/src/app/components/checkout/checkout.component.html)
+> - Complete updated checkout component TypeScript file here : [GitHub Link](https://github.com/SwarnadeepGhosh/cartify-ecommerce/tree/master/cartify-ui/src/app/components/checkout/checkout.component.ts)
+
+
+
+**Snapshots:** 
+
+<img src="images/feature2.0_checkoutForm_layout2.png" alt="feature2.0_checkoutForm_layout2" style="zoom:50%;" />
+
+<img src="images/feature2.0_checkoutForm_layout1.png" alt="feature2.0_checkoutForm_layout1" style="zoom:50%;" />
+
+
+
+### Populate Date Dropdowns
+
+Checkout Form Populate Credit Card Expiration Dates. Here **Month is dependable on Year**. First we will get the year, and on the basis of year, we will provide month values.
+
+Development Process
+
+1. Generate our form service: CheckoutFormService; ` ng generate service services/CheckoutFormService`
+
+2. Add methods to the form service for months and years
+
+   ***checkout-form.service.ts***
+
+   ```typescript
+   export class CheckoutFormService {
+       constructor() {}
+   
+       getCreditCardMonths(startMonth: number): Observable<number[]> {
+           let data: number[] = [];
+           // build an array for "Month" dropdown list, start at desired startMonth and loop until 12
+           for (let theMonth = startMonth; theMonth <= 12; theMonth++) {
+               data.push(theMonth);
+           }
+           return of(data); // The "of" operator from rxjs, will wrap an object as an Observable
+       }
+   
+       getCreditCardYears(): Observable<number[]> {
+           let data: number[] = [];
+           // build an array for "Year" dropdown list, start at current year and loop for next 10
+           const startYear: number = new Date().getFullYear(); // Curent year
+           const endYear: number = startYear + 10;
+   
+           for (let theYear = startYear; theYear <= endYear; theYear++) {
+               data.push(theYear);
+           }
+           return of(data); // The "of" operator from rxjs, will wrap an object as an Observable
+       }
+   }
+   ```
+
+   
+
+3. Update checkout component to retrieve the months and years from service
+
+   ***checkout.component.ts***
+
+   ```typescript
+   creditCardYears: number[] = [];
+   creditCardMonths: number[] = [];
+   ngOnInit(): void {
+       ...
+       // populate credit card years
+       this.luv2ShopFormService.getCreditCardYears().subscribe(
+           data => {
+               console.log("Retrieved credit card years: " + JSON.stringify(data));
+               this.creditCardYears = data;
+           }
+       );
+       
+       // no need to add month here as it will be auto populated depending on year
+   }
+   ```
+
+4. Update HTML template to populate drop-down lists for months and years -- *Already completed and updated: [GitHub Link](https://github.com/SwarnadeepGhosh/cartify-ecommerce/tree/master/cartify-ui/src/app/components/checkout/checkout.component.html)* 
+
+   ***checkout.component.html*** - For the Expiration Years drop-down list , Add event binding for change event
+
+   ```html
+   <select formControlName="expirationYear" (change)="handleMonthsAndYears()">
+       <option *ngFor="let year of creditCardYears"> {{ year }} </option>
+   </select>
+   ```
+
+5. Update checkout component,: add event handler, Read the selected year, Update the list of months based on selected year
+
+   ***checkout.component.ts***
+
+   ```typescript
+   handleMonthsAndYears() {
+       const creditCardFormGroup = this.checkoutFormGroup.get('creditCard');
+       const currentYear: number = new Date().getFullYear();
+       const selectedYear: number = Number(creditCardFormGroup.value.expirationYear);
+   
+       // if the current year equals the selected year, then start with current month
+       let startMonth: number;
+       if (currentYear === selectedYear) {
+           startMonth = new Date().getMonth() + 1;
+       } else {
+           startMonth = 1;
+       }
+       this.checkoutService.getCreditCardMonths(startMonth).subscribe((data) => {
+           console.log('Retrieved credit card months: ' + JSON.stringify(data));
+           this.creditCardMonths = data;
+       });
+   }
+   ```
+
+
+
+**Snapshot**
+
+<img src="images/feature2.0_checkoutForm_dropdown_date.png" alt="feature2.0_checkoutForm_dropdown_date" style="zoom: 67%;" />
+
+
+
+
+
+### Address Dropdowns
+

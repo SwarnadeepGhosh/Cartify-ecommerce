@@ -163,7 +163,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           List</strong></a></li>
           </ul></li>
           <li><a href="#checkout-form"
-          id="toc-checkout-form"><strong>Checkout Form</strong></a></li>
+          id="toc-checkout-form"><strong>Checkout Form</strong></a>
+          <ul>
+          <li><a href="#form-layout" id="toc-form-layout">Form
+          Layout</a></li>
+          <li><a href="#populate-date-dropdowns"
+          id="toc-populate-date-dropdowns">Populate Date
+          Dropdowns</a></li>
+          <li><a href="#address-dropdowns"
+          id="toc-address-dropdowns">Address Dropdowns</a></li>
+          </ul></li>
           </ul></li>
           </ul>
         </div>
@@ -1731,6 +1740,207 @@ class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb75
 <p><img src="images/feature2.0_cart-details.png" alt="feature2.0_cart-details" style="zoom:67%;" /></p>
 <hr />
 <h2 id="checkout-form"><strong>Checkout Form</strong></h2>
+<p>Angular provides two types of forms • Reactive forms •
+Template-driven forms.</p>
+<ul>
+<li><p>Reactive forms - <em>We will use this.</em></p>
+<ul>
+<li><p>Leverages programmatic API for form building</p></li>
+<li><p>Scaleable solution that is designed for large, complex
+forms</p></li>
+<li><p>Forms can be easily reused and tested</p></li>
+</ul></li>
+<li><p>Template-driven forms</p>
+<ul>
+<li><p>Targeted for small, simple forms</p></li>
+<li><p>Not a scalable solution for large, complex forms</p></li>
+</ul></li>
+</ul>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 84%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>FormControl</td>
+<td>Individual control that tracks the value and validation status</td>
+</tr>
+<tr class="even">
+<td>FormGroup</td>
+<td>A collection of controls. Can create nested groups.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="form-layout">Form Layout</h3>
+<p>Development Process</p>
+<ol type="1">
+<li><p>Generate our checkout component :
+<code>ng g c components/checkout</code></p></li>
+<li><p>Add a new route for checkout component</p>
+<p><strong><em>app-routing.module.ts</em></strong></p>
+<div class="sourceCode" id="cb76"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> routes<span class="op">:</span> Routes <span class="op">=</span> [</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>    {path<span class="op">:</span> <span class="st">&#39;checkout&#39;</span><span class="op">,</span> component<span class="op">:</span> CheckoutComponent}<span class="op">,</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span></code></pre></div></li>
+<li><p>Create a new checkout button and link to checkout component</p>
+<p><strong><em>cart-details.component.ts</em></strong></p>
+<div class="sourceCode" id="cb77"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>a routerLink<span class="op">=</span><span class="st">&#39;/checkout&#39;</span> <span class="kw">class</span><span class="op">=</span><span class="st">&quot;btn btn-primary&quot;</span><span class="op">&gt;</span>Checkout<span class="op">&lt;/</span>a<span class="op">&gt;</span></span></code></pre></div></li>
+<li><p>Add support for reactive forms</p>
+<p><strong><em>app.module.ts</em></strong></p>
+<div class="sourceCode" id="cb78"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>imports<span class="op">:</span> [ <span class="op">...</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>    ReactiveFormsModule</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>]<span class="op">,</span></span></code></pre></div></li>
+<li><p>Define form in component .ts file and add method to call on Form
+submit</p>
+<p><strong><em>checkout.component.ts</em></strong></p>
+<div class="sourceCode" id="cb79"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> CheckoutComponent <span class="kw">implements</span> OnInit {</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>    checkoutFormGroup<span class="op">:</span> FormGroup<span class="op">;</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constructor</span>(<span class="kw">private</span> formBuilder<span class="op">:</span> FormBuilder) { }</span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ngOnInit</span>()<span class="op">:</span> <span class="dt">void</span> {</span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span> <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="at">formBuilder</span><span class="op">.</span><span class="fu">group</span>({</span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>            customer<span class="op">:</span> <span class="kw">this</span><span class="op">.</span><span class="at">formBuilder</span><span class="op">.</span><span class="fu">group</span>({</span>
+<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a>                firstName<span class="op">:</span> [<span class="st">&#39;&#39;</span>]<span class="op">,</span></span>
+<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>                lastName<span class="op">:</span> [<span class="st">&#39;&#39;</span>]<span class="op">,</span></span>
+<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a>                email<span class="op">:</span> [<span class="st">&#39;&#39;</span>]</span>
+<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a>            })</span>
+<span id="cb79-11"><a href="#cb79-11" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Similarly we need to add other form elements like this</span></span>
+<span id="cb79-12"><a href="#cb79-12" aria-hidden="true" tabindex="-1"></a>        })<span class="op">;</span></span>
+<span id="cb79-13"><a href="#cb79-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb79-14"><a href="#cb79-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">onSubmit</span>() {</span>
+<span id="cb79-15"><a href="#cb79-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&quot;Handling the submit button&quot;</span>)<span class="op">;</span></span>
+<span id="cb79-16"><a href="#cb79-16" aria-hidden="true" tabindex="-1"></a>        <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;customer&#39;</span>)<span class="op">.</span><span class="at">value</span>)<span class="op">;</span></span>
+<span id="cb79-17"><a href="#cb79-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb79-18"><a href="#cb79-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p>Layout form controls in HTML template</p>
+<p><strong><em>checkout.component.html</em></strong></p>
+<div class="sourceCode" id="cb80"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;form</span> <span class="er">[formGroup]</span><span class="ot">=</span><span class="st">&quot;checkoutFormGroup&quot;</span> <span class="er">(ngSubmit)</span><span class="ot">=</span><span class="st">&quot;onSubmit()&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&lt;!-- customer form group --&gt;</span></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div</span> <span class="er">formGroupName</span><span class="ot">=</span><span class="st">&quot;customer&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;form-area&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;h3&gt;</span>Customer<span class="kw">&lt;/h3&gt;</span></span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;row&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>            <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;col-md-2&quot;</span><span class="kw">&gt;</span> <span class="kw">&lt;label&gt;</span>First Name<span class="kw">&lt;/label&gt;&lt;/div&gt;</span></span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>            <span class="kw">&lt;input</span> <span class="er">formControlName</span><span class="ot">=</span><span class="st">&quot;firstName&quot;</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;text&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">&lt;!-- Similarly we need to add other form elements like this--&gt;</span></span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;text-center&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb80-12"><a href="#cb80-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;button</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;submit&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;btn btn-info&quot;</span><span class="kw">&gt;</span>Purchase<span class="kw">&lt;/button&gt;</span></span>
+<span id="cb80-13"><a href="#cb80-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb80-14"><a href="#cb80-14" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb80-15"><a href="#cb80-15" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/form&gt;</span></span></code></pre></div></li>
+</ol>
+<blockquote>
+<ul>
+<li>Complete updated checkout component html file here : <a
+href="https://github.com/SwarnadeepGhosh/cartify-ecommerce/tree/master/cartify-ui/src/app/components/checkout/checkout.component.html">GitHub
+Link</a></li>
+<li>Complete updated checkout component TypeScript file here : <a
+href="https://github.com/SwarnadeepGhosh/cartify-ecommerce/tree/master/cartify-ui/src/app/components/checkout/checkout.component.ts">GitHub
+Link</a></li>
+</ul>
+</blockquote>
+<p><strong>Snapshots:</strong></p>
+<p><img src="images/feature2.0_checkoutForm_layout2.png" alt="feature2.0_checkoutForm_layout2" style="zoom:50%;" /></p>
+<p><img src="images/feature2.0_checkoutForm_layout1.png" alt="feature2.0_checkoutForm_layout1" style="zoom:50%;" /></p>
+<h3 id="populate-date-dropdowns">Populate Date Dropdowns</h3>
+<p>Checkout Form Populate Credit Card Expiration Dates. Here
+<strong>Month is dependable on Year</strong>. First we will get the
+year, and on the basis of year, we will provide month values.</p>
+<p>Development Process</p>
+<ol type="1">
+<li><p>Generate our form service: CheckoutFormService;
+<code>ng generate service services/CheckoutFormService</code></p></li>
+<li><p>Add methods to the form service for months and years</p>
+<p><strong><em>checkout-form.service.ts</em></strong></p>
+<div class="sourceCode" id="cb81"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> CheckoutFormService {</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constructor</span>() {}</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">getCreditCardMonths</span>(startMonth<span class="op">:</span> <span class="dt">number</span>)<span class="op">:</span> Observable<span class="op">&lt;</span><span class="dt">number</span>[]<span class="op">&gt;</span> {</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> data<span class="op">:</span> <span class="dt">number</span>[] <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">// build an array for &quot;Month&quot; dropdown list, start at desired startMonth and loop until 12</span></span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (<span class="kw">let</span> theMonth <span class="op">=</span> startMonth<span class="op">;</span> theMonth <span class="op">&lt;=</span> <span class="dv">12</span><span class="op">;</span> theMonth<span class="op">++</span>) {</span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>            data<span class="op">.</span><span class="fu">push</span>(theMonth)<span class="op">;</span></span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">of</span>(data)<span class="op">;</span> <span class="co">// The &quot;of&quot; operator from rxjs, will wrap an object as an Observable</span></span>
+<span id="cb81-11"><a href="#cb81-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb81-12"><a href="#cb81-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-13"><a href="#cb81-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">getCreditCardYears</span>()<span class="op">:</span> Observable<span class="op">&lt;</span><span class="dt">number</span>[]<span class="op">&gt;</span> {</span>
+<span id="cb81-14"><a href="#cb81-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> data<span class="op">:</span> <span class="dt">number</span>[] <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb81-15"><a href="#cb81-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// build an array for &quot;Year&quot; dropdown list, start at current year and loop for next 10</span></span>
+<span id="cb81-16"><a href="#cb81-16" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> startYear<span class="op">:</span> <span class="dt">number</span> <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">getFullYear</span>()<span class="op">;</span> <span class="co">// Curent year</span></span>
+<span id="cb81-17"><a href="#cb81-17" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> endYear<span class="op">:</span> <span class="dt">number</span> <span class="op">=</span> startYear <span class="op">+</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb81-18"><a href="#cb81-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-19"><a href="#cb81-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (<span class="kw">let</span> theYear <span class="op">=</span> startYear<span class="op">;</span> theYear <span class="op">&lt;=</span> endYear<span class="op">;</span> theYear<span class="op">++</span>) {</span>
+<span id="cb81-20"><a href="#cb81-20" aria-hidden="true" tabindex="-1"></a>            data<span class="op">.</span><span class="fu">push</span>(theYear)<span class="op">;</span></span>
+<span id="cb81-21"><a href="#cb81-21" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb81-22"><a href="#cb81-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">of</span>(data)<span class="op">;</span> <span class="co">// The &quot;of&quot; operator from rxjs, will wrap an object as an Observable</span></span>
+<span id="cb81-23"><a href="#cb81-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb81-24"><a href="#cb81-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p>Update checkout component to retrieve the months and years from
+service</p>
+<p><strong><em>checkout.component.ts</em></strong></p>
+<div class="sourceCode" id="cb82"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>creditCardYears<span class="op">:</span> <span class="dt">number</span>[] <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>creditCardMonths<span class="op">:</span> <span class="dt">number</span>[] <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ngOnInit</span>()<span class="op">:</span> <span class="dt">void</span> {</span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// populate credit card years</span></span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">luv2ShopFormService</span><span class="op">.</span><span class="fu">getCreditCardYears</span>()<span class="op">.</span><span class="fu">subscribe</span>(</span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a>        data <span class="kw">=&gt;</span> {</span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a>            <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&quot;Retrieved credit card years: &quot;</span> <span class="op">+</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(data))<span class="op">;</span></span>
+<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a>            <span class="kw">this</span><span class="op">.</span><span class="at">creditCardYears</span> <span class="op">=</span> data<span class="op">;</span></span>
+<span id="cb82-10"><a href="#cb82-10" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb82-11"><a href="#cb82-11" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb82-12"><a href="#cb82-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-13"><a href="#cb82-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// no need to add month here as it will be auto populated depending on year</span></span>
+<span id="cb82-14"><a href="#cb82-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p>Update HTML template to populate drop-down lists for months and
+years – <em>Already completed and updated: <a
+href="https://github.com/SwarnadeepGhosh/cartify-ecommerce/tree/master/cartify-ui/src/app/components/checkout/checkout.component.html">GitHub
+Link</a></em></p>
+<p><strong><em>checkout.component.html</em></strong> - For the
+Expiration Years drop-down list , Add event binding for change event</p>
+<div class="sourceCode" id="cb83"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;select</span> <span class="er">formControlName</span><span class="ot">=</span><span class="st">&quot;expirationYear&quot;</span> <span class="er">(change)</span><span class="ot">=</span><span class="st">&quot;handleMonthsAndYears()&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;option</span> <span class="er">*ngFor</span><span class="ot">=</span><span class="st">&quot;let year of creditCardYears&quot;</span><span class="kw">&gt;</span> {{ year }} <span class="kw">&lt;/option&gt;</span></span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/select&gt;</span></span></code></pre></div></li>
+<li><p>Update checkout component,: add event handler, Read the selected
+year, Update the list of months based on selected year</p>
+<p><strong><em>checkout.component.ts</em></strong></p>
+<div class="sourceCode" id="cb84"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">handleMonthsAndYears</span>() {</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> creditCardFormGroup <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;creditCard&#39;</span>)<span class="op">;</span></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> currentYear<span class="op">:</span> <span class="dt">number</span> <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">getFullYear</span>()<span class="op">;</span></span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> selectedYear<span class="op">:</span> <span class="dt">number</span> <span class="op">=</span> <span class="bu">Number</span>(creditCardFormGroup<span class="op">.</span><span class="at">value</span><span class="op">.</span><span class="at">expirationYear</span>)<span class="op">;</span></span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// if the current year equals the selected year, then start with current month</span></span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> startMonth<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (currentYear <span class="op">===</span> selectedYear) {</span>
+<span id="cb84-9"><a href="#cb84-9" aria-hidden="true" tabindex="-1"></a>        startMonth <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">getMonth</span>() <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb84-10"><a href="#cb84-10" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb84-11"><a href="#cb84-11" aria-hidden="true" tabindex="-1"></a>        startMonth <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb84-12"><a href="#cb84-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb84-13"><a href="#cb84-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">checkoutService</span><span class="op">.</span><span class="fu">getCreditCardMonths</span>(startMonth)<span class="op">.</span><span class="fu">subscribe</span>((data) <span class="kw">=&gt;</span> {</span>
+<span id="cb84-14"><a href="#cb84-14" aria-hidden="true" tabindex="-1"></a>        <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Retrieved credit card months: &#39;</span> <span class="op">+</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(data))<span class="op">;</span></span>
+<span id="cb84-15"><a href="#cb84-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">creditCardMonths</span> <span class="op">=</span> data<span class="op">;</span></span>
+<span id="cb84-16"><a href="#cb84-16" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb84-17"><a href="#cb84-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+</ol>
+<p><strong>Snapshot</strong></p>
+<p><img src="images/feature2.0_checkoutForm_dropdown_date.png" alt="feature2.0_checkoutForm_dropdown_date" style="zoom: 67%;" /></p>
+<h3 id="address-dropdowns">Address Dropdowns</h3>
         </div>
       </div>
     </div>
