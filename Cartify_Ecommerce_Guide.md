@@ -2153,5 +2153,206 @@ Development Process
 
 
 
-### Address Dropdowns
+### Address Dropdowns- Backend
 
+*We will Populate countries and states from the backend REST API (database). The user will select a country, Depending on country selected, populate list of states. Term "State" is different in each country.*
+
+Development Process - Backend
+
+1. Create database tables
+
+   ***backend_2.0_create-CountryState.sql***
+
+   ```sql
+   CREATE TABLE IF NOT EXISTS "cartify_ecommerce".country (
+   id SMALLINT NOT NULL,
+   code varchar(2) DEFAULT NULL,
+   name varchar(255) DEFAULT null,
+   CONSTRAINT "country_pk" PRIMARY KEY (id ASC)
+   ) ;
+   
+   CREATE TABLE IF NOT EXISTS "cartify_ecommerce".state (
+     id smallint not null PRIMARY KEY,
+     name varchar(255) DEFAULT NULL,
+     country_id smallint NOT NULL,
+     CONSTRAINT fk_country FOREIGN KEY (country_id) REFERENCES "cartify_ecommerce".country (id)
+   ) ;
+   ```
+
+2. Insert Data in Country and State
+
+   ***backend_2.0_create-CountryState.sql***
+
+   ```sql
+   INSERT INTO cartify_ecommerce.country (id, code, "name") VALUES 
+   (nextval('cartify_ecommerce.country_seq'),'BR','Brazil'),
+   ... ;
+   
+   INSERT INTO cartify_ecommerce.state (id, "name", country_id) VALUES
+   (nextval('cartify_ecommerce.state_seq'),'Acre',1),
+   ... ;
+   ```
+
+   
+
+3. Develop JPA Entities (Country, State)
+
+   ***Country.java***
+
+   ```java
+   package com.swarna.cartify.entity;
+   @Entity
+   @Data
+   @Table(name = "country", schema = "cartify_ecommerce")
+   public class Country {
+   
+       @Id
+       @SequenceGenerator(name = "country_seq", sequenceName = "country_seq", allocationSize = 1, schema = "cartify_ecommerce")
+       @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "country_seq")
+       @Column(name = "id")
+       private int id;
+   
+       @Column(name = "code")
+       private String code;
+   
+       @Column(name = "name")
+       private String name;
+   
+       @OneToMany(mappedBy = "country")
+       private List<State> states;
+   }
+   ```
+
+   ***State.java***
+
+   ```java
+   package com.swarna.cartify.entity;
+   @Entity
+   @Data
+   @Table(name = "state", schema = "cartify_ecommerce")
+   public class State {
+   
+   	@Id
+   	@SequenceGenerator(name = "state_seq", sequenceName = "state_seq", allocationSize = 1, schema = "cartify_ecommerce")
+   	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "state_seq")
+   	@Column(name = "id")
+   	private int id;
+   	
+   	@Column(name = "name")
+   	private String name;
+   	
+   	@ManyToOne
+   	@JoinColumn(name = "country_id")
+   	private Country country;
+   }
+   ```
+
+   
+
+4. Create Spring Data Repositories
+
+   ***CountryRepo.java***
+
+   ```java
+   package com.swarna.cartify.repo;
+   @RepositoryRestResource(collectionResourceRel = "countries", path = "countries")
+   public interface CountryRepo extends JpaRepository<Country, Integer> {
+   	
+   }
+   ```
+
+   ***StateRepo.java***
+
+   ```java
+   package com.swarna.cartify.repo;
+   @RepositoryRestResource
+   public interface StateRepo extends JpaRepository<State, Integer> {
+   
+       // API = http://localhost:8080/api/states/search/findByCountryCode?code=IN
+       List<State> findByCountryCode(@Param("code") String code);
+   }
+   ```
+
+   
+
+5. Update Spring Data REST Configs
+
+   ***MyDataRestConfig.java*** - Refactored and make a new method `disableHttpMethods` to disable http methods for specific classes.
+
+   ```java
+   package com.swarna.cartify.config;
+   @Configuration
+   public class MyDataRestConfig implements RepositoryRestConfigurer {
+   ...
+       @Override
+       public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
+   
+           HttpMethod[] theUnsupportedActions = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PATCH};
+   
+           // disable HTTP methods: PUT, POST, DELETE and PATCH
+           disableHttpMethods(Product.class,config, theUnsupportedActions);
+           disableHttpMethods(ProductCategory.class,config, theUnsupportedActions);
+           disableHttpMethods(Country.class,config, theUnsupportedActions);
+           disableHttpMethods(State.class,config, theUnsupportedActions);
+           ...
+       }
+   
+       private void disableHttpMethods(Class theClass, RepositoryRestConfiguration config, HttpMethod[] theUnsupportedActions) {
+           config.getExposureConfiguration()
+               .forDomainType(theClass)
+               .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
+               .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
+       }
+       ...
+   }
+   ```
+
+
+
+**Testing**
+
+```json
+-- To Get all states
+GET http://localhost:8080/api/states
+
+-- To Get all countries
+GET http://localhost:8080/api/countries
+
+-- To get one country
+GET http://localhost:8080/api/countries
+Output
+{
+  "id" : 4,
+  "code" : "IN",
+  "name" : "India",
+  ...
+}
+
+-- To get one state
+GET http://localhost:8080/api/states/19
+Output :
+{
+  "id" : 19,
+  "name" : "Rio de Janeiro",
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/api/states/19"
+    },
+    "state" : {
+      "href" : "http://localhost:8080/api/states/19"
+    },
+    "country" : {
+      "href" : "http://localhost:8080/api/states/19/country"
+    }
+  }
+}
+
+-- To Get all States of a country
+GET http://localhost:8080/api/states/search/findByCountryCode?code=IN
+```
+
+
+
+
+
+### Address Dropdowns- FrontEnd

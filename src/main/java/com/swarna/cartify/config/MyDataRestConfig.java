@@ -1,7 +1,10 @@
 package com.swarna.cartify.config;
 
+import com.swarna.cartify.entity.Country;
 import com.swarna.cartify.entity.Product;
 import com.swarna.cartify.entity.ProductCategory;
+import com.swarna.cartify.entity.State;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -25,18 +28,12 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
 
         HttpMethod[] theUnsupportedActions = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PATCH};
 
-        // disable HTTP methods for Product: PUT, POST, DELETE and PATCH
-        config.getExposureConfiguration()
-                .forDomainType(Product.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
-
-        // disable HTTP methods for ProductCategory: PUT, POST, DELETE and PATCH
-        config.getExposureConfiguration()
-                .forDomainType(ProductCategory.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
-
+        // disable HTTP methods: PUT, POST, DELETE and PATCH
+        disableHttpMethods(Product.class,config, theUnsupportedActions);
+        disableHttpMethods(ProductCategory.class,config, theUnsupportedActions);
+        disableHttpMethods(Country.class,config, theUnsupportedActions);
+        disableHttpMethods(State.class,config, theUnsupportedActions);
+        
         // Added for CORS allow origin
         cors.addMapping("/**").allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
@@ -47,20 +44,24 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
         exposeIds(config);
     }
 
+	private void disableHttpMethods(Class theClass, RepositoryRestConfiguration config, HttpMethod[] theUnsupportedActions) {
+		config.getExposureConfiguration()
+                .forDomainType(theClass)
+                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
+                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
+	}
+
     private void exposeIds(RepositoryRestConfiguration config) {
-        //expose entity ids
-        // - get a list of all entity classes from the entity manager
+        //expose entity ids, get a list of all entity classes from the entity manager
         Set<EntityType<?>> entities = entityManager.getMetamodel().getEntities();
 
-        // - create an array of the entity types
-        List<Class> entityClasses = new ArrayList<>();
+        List<Class> entityClasses = new ArrayList<>();	//create an array of the entity types
 
-        // - get the entity types for the entities
-        for (EntityType tempEntityType : entities) {
+        for (EntityType tempEntityType : entities) {	//get the entity types for the entities
             entityClasses.add(tempEntityType.getJavaType());
         }
 
-        // - expose the entity ids for the array of entity/domain types
+        //expose the entity ids for the array of entity/domain types
         Class[] domainTypes = entityClasses.toArray(new Class[0]);
         config.exposeIdsFor(domainTypes);
     }
