@@ -2356,3 +2356,177 @@ GET http://localhost:8080/api/states/search/findByCountryCode?code=IN
 
 
 ### Address Dropdowns- FrontEnd
+
+Development Process - Frontend
+
+1. Create TypeScript classes for: Country and State: `ng g class common/Country`, `ng g class common/State`
+
+   ```typescript
+   // country.ts
+   export class Country {
+     id: number;
+     code: string;
+     name: string;
+   }
+   
+   // state.ts
+   export class State {
+     id: number;
+     name: string;
+   }
+   ```
+
+   
+
+2. Add methods to the form service for countries and states
+
+   ***checkout-form.service.ts***
+
+   ```typescript
+   export class CheckoutFormService {
+       
+     getCountries(): Observable<Country[]> {
+       const searchCountriesUrl = `${environment.apiServerUrl}/countries`;
+       return this.httpClient.get<GetResponseCountries>(searchCountriesUrl)
+         .pipe(map((response) => response._embedded.countries));
+     }
+   
+     getStates(theCountryCode: string): Observable<State[]> {
+       const searchStatesUrl = `${environment.apiServerUrl}/states/search/findByCountryCode?code=${theCountryCode}`;
+       return this.httpClient.get<GetResponseStates>(searchStatesUrl)
+         .pipe(map((response) => response._embedded.states));
+     }
+   }
+   
+   interface GetResponseCountries {
+     _embedded: {
+       countries: Country[];
+     };
+   }
+   interface GetResponseStates {
+     _embedded: {
+       states: State[];
+     };
+   }
+   ```
+
+   
+
+3. Update checkout component to retrieve the countries from service
+
+   ***checkout.component.ts***
+
+   ```typescript
+   export class CheckoutComponent implements OnInit {
+   ...
+     // Country - State dropdown fields
+     countries: Country[] = [];
+     shippingAddressStates: State[] = [];
+     billingAddressStates: State[] = [];
+   
+     ngOnInit(): void {
+         ...
+       // populate countries
+       this.checkoutService.getCountries().subscribe((data) => {
+         this.countries = data;
+       });
+     }
+   
+     onSubmit() { ...
+       console.log(
+         'Shipping Country : ' +
+           this.checkoutFormGroup.get('shippingAddress').value.country.name
+       );
+       console.log(
+         'Shipping State : ' +
+           this.checkoutFormGroup.get('shippingAddress').value.state.name
+       );
+     }
+   	...
+     getStates(formGroupName: string) {
+       const formGroup = this.checkoutFormGroup.get(formGroupName);
+       const countryCode = formGroup.value.country.code;
+   
+       this.checkoutService.getStates(countryCode).subscribe((data) => {
+         if (formGroupName === 'shippingAddress') {
+           this.shippingAddressStates = data;
+         } else {
+           this.billingAddressStates = data;
+         }
+   
+         formGroup.get('state').setValue(data[0]); // select first item by default
+       });
+     }
+   }
+   ```
+
+   
+
+4. Update HTML template to populate drop-down lists for countries. Add event handler `getStates()` for checkout component => This handler will *Read the selected country, retrieve list of states based on selected country*
+
+   ***checkout.component.html***
+
+   ```html
+   <div class="col-md-2"> <label>Country</label></div>
+   
+   <div class="input-space">
+       <select formControlName="country" (change)="getStates('shippingAddress')">
+           <option *ngFor="let country of countries" [ngValue]="country" >
+               {{ country.name }}
+           </option>
+       </select>
+   </div>
+   ```
+
+   
+
+5. Update HTML template to populate drop-down lists for states
+
+   ***checkout.component.html***
+
+   ```html
+   <div class="col-md-2"> <label>State</label></div>
+   
+   <div class="input-space">
+       <select formControlName="state">
+           <option *ngFor="let state of shippingAddressStates" [ngValue]="state">
+               {{ state.name }}
+           </option>
+       </select>
+   </div>
+   ```
+
+   
+
+6. Write method handler for checkbox copy Shipping to Billing address.
+
+   ***checkout.component.ts***
+
+   ```typescript
+   export class CheckoutComponent implements OnInit {
+     ...
+     copyShippingAddressToBillingAddress(event) {
+       if (event.target.checked) {
+         this.checkoutFormGroup.controls['billingAddress'].setValue(
+           this.checkoutFormGroup.controls['shippingAddress'].value
+         );
+   
+         // bug fix for states
+         this.billingAddressStates = this.shippingAddressStates;
+       } else {
+         this.checkoutFormGroup.controls['billingAddress'].reset();
+   
+         // bug fix for states
+         this.billingAddressStates = [];
+       }
+     }
+     ...
+   }
+   ```
+
+
+
+
+
+### Form Validation
+

@@ -42,9 +42,11 @@
                         <div class="col-md-2"> <label>Country</label></div>
                         <div class="col-md-9">
                             <div class="input-space">
-                                <select formControlName="country">
+                                <select formControlName="country" (change)="getStates('shippingAddress')">
                                     <option value="" selected disabled>&lt;&lt; Please select country &gt;&gt;</option>
-                                    <option>TO DO</option>
+                                    <option *ngFor="let country of countries" [ngValue]="country">
+                                        {{ country.name }}
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -74,7 +76,9 @@
                             <div class="input-space">
                                 <select formControlName="state">
                                     <option value="" selected disabled>&lt;&lt; Please select state &gt;&gt;</option>
-                                    <option>TO DO</option>
+                                    <option *ngFor="let state of shippingAddressStates" [ngValue]="state">
+                                        {{ state.name }}
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -109,9 +113,11 @@
                         <div class="col-md-2"> <label>Country</label></div>
                         <div class="col-md-9">
                             <div class="input-space">
-                                <select formControlName="country">
+                                <select formControlName="country" (change)="getStates('billingAddress')">
                                     <option value="" selected disabled>&lt;&lt; Please select country &gt;&gt;</option>
-                                    <option>TO DO</option>
+                                    <option *ngFor="let country of countries" [ngValue]="country">
+                                        {{ country.name }}
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -141,7 +147,9 @@
                             <div class="input-space">
                                 <select formControlName="state">
                                     <option value="" selected disabled>&lt;&lt; Please select state &gt;&gt;</option>
-                                    <option>TO DO</option>
+                                    <option *ngFor="let state of billingAddressStates" [ngValue]="state">
+                                        {{ state.name }}
+                                    </option>
                                 </select>
                             </div>
                         </div>

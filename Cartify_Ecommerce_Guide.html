@@ -176,6 +176,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <li><a href="#address-dropdowns--frontend"
           id="toc-address-dropdowns--frontend">Address Dropdowns-
           FrontEnd</a></li>
+          <li><a href="#form-validation" id="toc-form-validation">Form
+          Validation</a></li>
           </ul></li>
           </ul></li>
           </ul>
@@ -1986,20 +1988,20 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb87-1"><a href=
 <span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a><span class="at">@Table</span><span class="op">(</span>name <span class="op">=</span> <span class="st">&quot;country&quot;</span><span class="op">,</span> schema <span class="op">=</span> <span class="st">&quot;cartify_ecommerce&quot;</span><span class="op">)</span></span>
 <span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Country <span class="op">{</span></span>
 <span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a> <span class="at">@Id</span></span>
-<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a> <span class="at">@SequenceGenerator</span><span class="op">(</span>name <span class="op">=</span> <span class="st">&quot;country_seq&quot;</span><span class="op">,</span> sequenceName <span class="op">=</span> <span class="st">&quot;country_seq&quot;</span><span class="op">,</span> allocationSize <span class="op">=</span> <span class="dv">1</span><span class="op">,</span> schema <span class="op">=</span> <span class="st">&quot;cartify_ecommerce&quot;</span><span class="op">)</span></span>
-<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a> <span class="at">@GeneratedValue</span><span class="op">(</span>strategy <span class="op">=</span> GenerationType<span class="op">.</span><span class="fu">SEQUENCE</span><span class="op">,</span> generator <span class="op">=</span> <span class="st">&quot;country_seq&quot;</span><span class="op">)</span></span>
-<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a> <span class="at">@Column</span><span class="op">(</span>name <span class="op">=</span> <span class="st">&quot;id&quot;</span><span class="op">)</span></span>
-<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a> <span class="kw">private</span> <span class="dt">int</span> id<span class="op">;</span></span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Id</span></span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">@SequenceGenerator</span><span class="op">(</span>name <span class="op">=</span> <span class="st">&quot;country_seq&quot;</span><span class="op">,</span> sequenceName <span class="op">=</span> <span class="st">&quot;country_seq&quot;</span><span class="op">,</span> allocationSize <span class="op">=</span> <span class="dv">1</span><span class="op">,</span> schema <span class="op">=</span> <span class="st">&quot;cartify_ecommerce&quot;</span><span class="op">)</span></span>
+<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">@GeneratedValue</span><span class="op">(</span>strategy <span class="op">=</span> GenerationType<span class="op">.</span><span class="fu">SEQUENCE</span><span class="op">,</span> generator <span class="op">=</span> <span class="st">&quot;country_seq&quot;</span><span class="op">)</span></span>
+<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Column</span><span class="op">(</span>name <span class="op">=</span> <span class="st">&quot;id&quot;</span><span class="op">)</span></span>
+<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">int</span> id<span class="op">;</span></span>
 <span id="cb87-12"><a href="#cb87-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb87-13"><a href="#cb87-13" aria-hidden="true" tabindex="-1"></a> <span class="at">@Column</span><span class="op">(</span>name <span class="op">=</span> <span class="st">&quot;code&quot;</span><span class="op">)</span></span>
-<span id="cb87-14"><a href="#cb87-14" aria-hidden="true" tabindex="-1"></a> <span class="kw">private</span> <span class="bu">String</span> code<span class="op">;</span></span>
+<span id="cb87-13"><a href="#cb87-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Column</span><span class="op">(</span>name <span class="op">=</span> <span class="st">&quot;code&quot;</span><span class="op">)</span></span>
+<span id="cb87-14"><a href="#cb87-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> code<span class="op">;</span></span>
 <span id="cb87-15"><a href="#cb87-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb87-16"><a href="#cb87-16" aria-hidden="true" tabindex="-1"></a> <span class="at">@Column</span><span class="op">(</span>name <span class="op">=</span> <span class="st">&quot;name&quot;</span><span class="op">)</span></span>
-<span id="cb87-17"><a href="#cb87-17" aria-hidden="true" tabindex="-1"></a> <span class="kw">private</span> <span class="bu">String</span> name<span class="op">;</span></span>
+<span id="cb87-16"><a href="#cb87-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Column</span><span class="op">(</span>name <span class="op">=</span> <span class="st">&quot;name&quot;</span><span class="op">)</span></span>
+<span id="cb87-17"><a href="#cb87-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> name<span class="op">;</span></span>
 <span id="cb87-18"><a href="#cb87-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb87-19"><a href="#cb87-19" aria-hidden="true" tabindex="-1"></a> <span class="at">@OneToMany</span><span class="op">(</span>mappedBy <span class="op">=</span> <span class="st">&quot;country&quot;</span><span class="op">)</span></span>
-<span id="cb87-20"><a href="#cb87-20" aria-hidden="true" tabindex="-1"></a> <span class="kw">private</span> <span class="bu">List</span><span class="op">&lt;</span><span class="bu">State</span><span class="op">&gt;</span> states<span class="op">;</span></span>
+<span id="cb87-19"><a href="#cb87-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">@OneToMany</span><span class="op">(</span>mappedBy <span class="op">=</span> <span class="st">&quot;country&quot;</span><span class="op">)</span></span>
+<span id="cb87-20"><a href="#cb87-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">List</span><span class="op">&lt;</span><span class="bu">State</span><span class="op">&gt;</span> states<span class="op">;</span></span>
 <span id="cb87-21"><a href="#cb87-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p><strong><em>State.java</em></strong></p>
 <div class="sourceCode" id="cb88"><pre
@@ -2110,6 +2112,149 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb92-1"><a href=
 <span id="cb92-36"><a href="#cb92-36" aria-hidden="true" tabindex="-1"></a><span class="er">--</span> <span class="er">To</span> <span class="er">Get</span> <span class="er">all</span> <span class="er">States</span> <span class="er">of</span> <span class="er">a</span> <span class="er">country</span></span>
 <span id="cb92-37"><a href="#cb92-37" aria-hidden="true" tabindex="-1"></a><span class="er">GET</span> <span class="er">http://localhost:8080/api/states/search/findByCountryCode?code=IN</span></span></code></pre></div>
 <h3 id="address-dropdowns--frontend">Address Dropdowns- FrontEnd</h3>
+<p>Development Process - Frontend</p>
+<ol type="1">
+<li><p>Create TypeScript classes for: Country and State:
+<code>ng g class common/Country</code>,
+<code>ng g class common/State</code></p>
+<div class="sourceCode" id="cb93"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co">// country.ts</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> Country {</span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  id<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>  code<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>  name<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb93-7"><a href="#cb93-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-8"><a href="#cb93-8" aria-hidden="true" tabindex="-1"></a><span class="co">// state.ts</span></span>
+<span id="cb93-9"><a href="#cb93-9" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> State {</span>
+<span id="cb93-10"><a href="#cb93-10" aria-hidden="true" tabindex="-1"></a>  id<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb93-11"><a href="#cb93-11" aria-hidden="true" tabindex="-1"></a>  name<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb93-12"><a href="#cb93-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p>Add methods to the form service for countries and states</p>
+<p><strong><em>checkout-form.service.ts</em></strong></p>
+<div class="sourceCode" id="cb94"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> CheckoutFormService {</span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getCountries</span>()<span class="op">:</span> Observable<span class="op">&lt;</span>Country[]<span class="op">&gt;</span> {</span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> searchCountriesUrl <span class="op">=</span> <span class="vs">`</span><span class="sc">${</span>environment<span class="op">.</span><span class="at">apiServerUrl</span><span class="sc">}</span><span class="vs">/countries`</span><span class="op">;</span></span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">httpClient</span><span class="op">.</span><span class="fu">get</span><span class="op">&lt;</span>GetResponseCountries<span class="op">&gt;</span>(searchCountriesUrl)</span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">pipe</span>(<span class="fu">map</span>((response) <span class="kw">=&gt;</span> response<span class="op">.</span><span class="at">_embedded</span><span class="op">.</span><span class="at">countries</span>))<span class="op">;</span></span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getStates</span>(theCountryCode<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> Observable<span class="op">&lt;</span>State[]<span class="op">&gt;</span> {</span>
+<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> searchStatesUrl <span class="op">=</span> <span class="vs">`</span><span class="sc">${</span>environment<span class="op">.</span><span class="at">apiServerUrl</span><span class="sc">}</span><span class="vs">/states/search/findByCountryCode?code=</span><span class="sc">${</span>theCountryCode<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb94-11"><a href="#cb94-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">httpClient</span><span class="op">.</span><span class="fu">get</span><span class="op">&lt;</span>GetResponseStates<span class="op">&gt;</span>(searchStatesUrl)</span>
+<span id="cb94-12"><a href="#cb94-12" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">pipe</span>(<span class="fu">map</span>((response) <span class="kw">=&gt;</span> response<span class="op">.</span><span class="at">_embedded</span><span class="op">.</span><span class="at">states</span>))<span class="op">;</span></span>
+<span id="cb94-13"><a href="#cb94-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb94-14"><a href="#cb94-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb94-15"><a href="#cb94-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-16"><a href="#cb94-16" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> GetResponseCountries {</span>
+<span id="cb94-17"><a href="#cb94-17" aria-hidden="true" tabindex="-1"></a>  _embedded<span class="op">:</span> {</span>
+<span id="cb94-18"><a href="#cb94-18" aria-hidden="true" tabindex="-1"></a>    countries<span class="op">:</span> Country[]<span class="op">;</span></span>
+<span id="cb94-19"><a href="#cb94-19" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb94-20"><a href="#cb94-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb94-21"><a href="#cb94-21" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> GetResponseStates {</span>
+<span id="cb94-22"><a href="#cb94-22" aria-hidden="true" tabindex="-1"></a>  _embedded<span class="op">:</span> {</span>
+<span id="cb94-23"><a href="#cb94-23" aria-hidden="true" tabindex="-1"></a>    states<span class="op">:</span> State[]<span class="op">;</span></span>
+<span id="cb94-24"><a href="#cb94-24" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb94-25"><a href="#cb94-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p>Update checkout component to retrieve the countries from
+service</p>
+<p><strong><em>checkout.component.ts</em></strong></p>
+<div class="sourceCode" id="cb95"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> CheckoutComponent <span class="kw">implements</span> OnInit {</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Country - State dropdown fields</span></span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a>  countries<span class="op">:</span> Country[] <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a>  shippingAddressStates<span class="op">:</span> State[] <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb95-6"><a href="#cb95-6" aria-hidden="true" tabindex="-1"></a>  billingAddressStates<span class="op">:</span> State[] <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb95-7"><a href="#cb95-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-8"><a href="#cb95-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ngOnInit</span>()<span class="op">:</span> <span class="dt">void</span> {</span>
+<span id="cb95-9"><a href="#cb95-9" aria-hidden="true" tabindex="-1"></a>      <span class="op">...</span></span>
+<span id="cb95-10"><a href="#cb95-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// populate countries</span></span>
+<span id="cb95-11"><a href="#cb95-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">checkoutService</span><span class="op">.</span><span class="fu">getCountries</span>()<span class="op">.</span><span class="fu">subscribe</span>((data) <span class="kw">=&gt;</span> {</span>
+<span id="cb95-12"><a href="#cb95-12" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">countries</span> <span class="op">=</span> data<span class="op">;</span></span>
+<span id="cb95-13"><a href="#cb95-13" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb95-14"><a href="#cb95-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb95-15"><a href="#cb95-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-16"><a href="#cb95-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">onSubmit</span>() { <span class="op">...</span></span>
+<span id="cb95-17"><a href="#cb95-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(</span>
+<span id="cb95-18"><a href="#cb95-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;Shipping Country : &#39;</span> <span class="op">+</span></span>
+<span id="cb95-19"><a href="#cb95-19" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;shippingAddress&#39;</span>)<span class="op">.</span><span class="at">value</span><span class="op">.</span><span class="at">country</span><span class="op">.</span><span class="at">name</span></span>
+<span id="cb95-20"><a href="#cb95-20" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb95-21"><a href="#cb95-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(</span>
+<span id="cb95-22"><a href="#cb95-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;Shipping State : &#39;</span> <span class="op">+</span></span>
+<span id="cb95-23"><a href="#cb95-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;shippingAddress&#39;</span>)<span class="op">.</span><span class="at">value</span><span class="op">.</span><span class="at">state</span><span class="op">.</span><span class="at">name</span></span>
+<span id="cb95-24"><a href="#cb95-24" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb95-25"><a href="#cb95-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb95-26"><a href="#cb95-26" aria-hidden="true" tabindex="-1"></a> <span class="op">...</span></span>
+<span id="cb95-27"><a href="#cb95-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getStates</span>(formGroupName<span class="op">:</span> <span class="dt">string</span>) {</span>
+<span id="cb95-28"><a href="#cb95-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> formGroup <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="fu">get</span>(formGroupName)<span class="op">;</span></span>
+<span id="cb95-29"><a href="#cb95-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> countryCode <span class="op">=</span> formGroup<span class="op">.</span><span class="at">value</span><span class="op">.</span><span class="at">country</span><span class="op">.</span><span class="at">code</span><span class="op">;</span></span>
+<span id="cb95-30"><a href="#cb95-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-31"><a href="#cb95-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">checkoutService</span><span class="op">.</span><span class="fu">getStates</span>(countryCode)<span class="op">.</span><span class="fu">subscribe</span>((data) <span class="kw">=&gt;</span> {</span>
+<span id="cb95-32"><a href="#cb95-32" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (formGroupName <span class="op">===</span> <span class="st">&#39;shippingAddress&#39;</span>) {</span>
+<span id="cb95-33"><a href="#cb95-33" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">shippingAddressStates</span> <span class="op">=</span> data<span class="op">;</span></span>
+<span id="cb95-34"><a href="#cb95-34" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb95-35"><a href="#cb95-35" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">billingAddressStates</span> <span class="op">=</span> data<span class="op">;</span></span>
+<span id="cb95-36"><a href="#cb95-36" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb95-37"><a href="#cb95-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-38"><a href="#cb95-38" aria-hidden="true" tabindex="-1"></a>      formGroup<span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;state&#39;</span>)<span class="op">.</span><span class="fu">setValue</span>(data[<span class="dv">0</span>])<span class="op">;</span> <span class="co">// select first item by default</span></span>
+<span id="cb95-39"><a href="#cb95-39" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb95-40"><a href="#cb95-40" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb95-41"><a href="#cb95-41" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p>Update HTML template to populate drop-down lists for countries.
+Add event handler <code>getStates()</code> for checkout component =&gt;
+This handler will <em>Read the selected country, retrieve list of states
+based on selected country</em></p>
+<p><strong><em>checkout.component.html</em></strong></p>
+<div class="sourceCode" id="cb96"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;col-md-2&quot;</span><span class="kw">&gt;</span> <span class="kw">&lt;label&gt;</span>Country<span class="kw">&lt;/label&gt;&lt;/div&gt;</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;input-space&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;select</span> <span class="er">formControlName</span><span class="ot">=</span><span class="st">&quot;country&quot;</span> <span class="er">(change)</span><span class="ot">=</span><span class="st">&quot;getStates(&#39;shippingAddress&#39;)&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;option</span> <span class="er">*ngFor</span><span class="ot">=</span><span class="st">&quot;let country of countries&quot;</span> <span class="er">[ngValue]</span><span class="ot">=</span><span class="st">&quot;country&quot;</span> <span class="kw">&gt;</span></span>
+<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a>            {{ country.name }}</span>
+<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;/option&gt;</span></span>
+<span id="cb96-8"><a href="#cb96-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/select&gt;</span></span>
+<span id="cb96-9"><a href="#cb96-9" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div></li>
+<li><p>Update HTML template to populate drop-down lists for states</p>
+<p><strong><em>checkout.component.html</em></strong></p>
+<div class="sourceCode" id="cb97"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;col-md-2&quot;</span><span class="kw">&gt;</span> <span class="kw">&lt;label&gt;</span>State<span class="kw">&lt;/label&gt;&lt;/div&gt;</span></span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;input-space&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;select</span> <span class="er">formControlName</span><span class="ot">=</span><span class="st">&quot;state&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;option</span> <span class="er">*ngFor</span><span class="ot">=</span><span class="st">&quot;let state of shippingAddressStates&quot;</span> <span class="er">[ngValue]</span><span class="ot">=</span><span class="st">&quot;state&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb97-6"><a href="#cb97-6" aria-hidden="true" tabindex="-1"></a>            {{ state.name }}</span>
+<span id="cb97-7"><a href="#cb97-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;/option&gt;</span></span>
+<span id="cb97-8"><a href="#cb97-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/select&gt;</span></span>
+<span id="cb97-9"><a href="#cb97-9" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div></li>
+<li><p>Write method handler for checkbox copy Shipping to Billing
+address.</p>
+<p><strong><em>checkout.component.ts</em></strong></p>
+<div class="sourceCode" id="cb98"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> CheckoutComponent <span class="kw">implements</span> OnInit {</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">copyShippingAddressToBillingAddress</span>(<span class="bu">event</span>) {</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="bu">event</span><span class="op">.</span><span class="at">target</span><span class="op">.</span><span class="at">checked</span>) {</span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="at">controls</span>[<span class="st">&#39;billingAddress&#39;</span>]<span class="op">.</span><span class="fu">setValue</span>(</span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="at">controls</span>[<span class="st">&#39;shippingAddress&#39;</span>]<span class="op">.</span><span class="at">value</span></span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a>      )<span class="op">;</span></span>
+<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a>      <span class="co">// bug fix for states</span></span>
+<span id="cb98-10"><a href="#cb98-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">billingAddressStates</span> <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="at">shippingAddressStates</span><span class="op">;</span></span>
+<span id="cb98-11"><a href="#cb98-11" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb98-12"><a href="#cb98-12" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="at">controls</span>[<span class="st">&#39;billingAddress&#39;</span>]<span class="op">.</span><span class="fu">reset</span>()<span class="op">;</span></span>
+<span id="cb98-13"><a href="#cb98-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-14"><a href="#cb98-14" aria-hidden="true" tabindex="-1"></a>      <span class="co">// bug fix for states</span></span>
+<span id="cb98-15"><a href="#cb98-15" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">billingAddressStates</span> <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb98-16"><a href="#cb98-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb98-17"><a href="#cb98-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb98-18"><a href="#cb98-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb98-19"><a href="#cb98-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+</ol>
+<h3 id="form-validation">Form Validation</h3>
         </div>
       </div>
     </div>
