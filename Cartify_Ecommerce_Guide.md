@@ -2530,3 +2530,162 @@ Development Process - Frontend
 
 ### Form Validation
 
+Before we submit the form to the backend ... let's perform validation. Angular has a set of built-in validation rules
+
+| Name      | Description                                            |
+| --------- | ------------------------------------------------------ |
+| required  | Must be a non-empty value                              |
+| min       | Must be a number >= value                              |
+| max       | Must be a number <= value                              |
+| minLength | Length must be >= value                                |
+| maxLength | Length must be <= value                                |
+| pattern   | Must match a regular expression pattern                |
+| email     | Match email against common regular expression patterns |
+
+Additional Validation Features : • Define custom validators • Cross-field validation • Asynchronous validators
+
+
+
+> ***My requirements***
+>
+> - *All fields are required*
+> - *Email address: has proper email format*
+>
+> - *Credit card field: only numbers allowed (16 digits)*
+>
+> - *CVC number: only numbers allowed (3 digits)*
+
+
+
+**Development Process**
+
+1. Create a Custom Validation that only whitespace is not allowed and will be treated as empty. `ng g class common/validators/CartifyValidators`
+
+   ***cartify-validators.ts*** - If it ONLY has whitespace • then return an error (failed) • else return null (passed)
+
+   ```typescript
+   export class CartifyValidators {
+   
+     // whitespace validation
+     static notOnlyWhitespace(control: FormControl): ValidationErrors {
+   
+       // check if string only contains whitespace
+       if (control.value != null && control.value.trim().length === 0) {
+         // invalid, return error object
+         return { notOnlyWhitespace: true }; // The HTML template will check for this error key
+       } 
+       else {
+         return null;  // valid, return null
+       }
+     } 
+   }
+   ```
+
+   
+
+2. Specify validation rules for the form controls
+
+   ***checkout.component.ts***
+
+   *Mehtioning some important fields here, others fields will be similar.* Like `firstName`,`email`,`zipCode`
+
+   ```typescript
+     ngOnInit(): void {
+       this.checkoutFormGroup = this.formBuilder.group({
+         customer: this.formBuilder.group({
+           firstName: new FormControl('', [
+             Validators.required,
+             Validators.minLength(2),
+             CartifyValidators.notOnlyWhitespace,
+           ]),
+   		...
+           email: new FormControl('', [
+             Validators.required,
+             Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
+           ]),
+         }),
+   
+         shippingAddress: this.formBuilder.group({
+   		...
+           zipCode: new FormControl('', [Validators.required,Validators.pattern('[0-9]{6}'),]),
+         }),
+   	...
+       });
+   ```
+
+   
+
+3. Define Getter methods to access form controls
+
+   ***checkout.component.ts***
+
+   ```typescript
+   /********* Custom Getter methods to access form controls from Html template ********************/
+   get firstName() { return this.checkoutFormGroup.get('customer.firstName'); }
+   get email() { return this.checkoutFormGroup.get('customer.email'); }
+   get shippingAddressZipCode() { return this.checkoutFormGroup.get('shippingAddress.zipCode'); }
+   ...
+   ```
+
+   
+
+4. Update HTML template to display error messages
+
+   - ***invalid**: did validations fail?*
+   - ***dirty**: did user change field value?*
+   - ***touched**: did field lose focus?*
+   - ***errors** object contains list of validations that failed for this form control*
+
+   ***checkout.component.html***
+
+   ```html
+   ...
+   <div class="input-space">
+       <input formControlName="firstName" type="text">
+       <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="text-danger">
+           <small *ngIf="firstName.errors['required'] || firstName.errors['notOnlyWhitespace']" >First Name is required</small>
+           <small *ngIf="firstName.errors['minlength']" >First Name must be at least 2 characters long</small>
+       </div>
+   </div>
+   ...
+   
+   <div class="input-space">
+       <input formControlName="email" type="text">
+       <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-danger">
+           <small *ngIf="email.errors['required']" >Email is required</small>
+           <small *ngIf="email.errors['pattern']" >Email must be a valid email address</small>
+       </div>
+   </div>
+   ...
+   
+   <div class="input-space">
+       <input formControlName="zipCode" type="text">
+       <div *ngIf="shippingAddressZipCode.invalid && (shippingAddressZipCode.dirty || shippingAddressZipCode.touched)" class="text-danger">
+           <small *ngIf="shippingAddressZipCode.errors['required']" >shippingAddressZipCode is required</small>
+           <small *ngIf="shippingAddressZipCode.errors['pattern']" >Please enter 6 digit zipcode</small>
+       </div>
+   </div>
+   ...
+   ```
+
+   
+
+5. Add event handler to check validation status when submit button clicked
+
+   ***checkout.component.ts***
+
+   ```typescript
+   onSubmit() {
+       if (this.checkoutFormGroup.invalid) {
+           this.checkoutFormGroup.markAllAsTouched();	// // Touching all fields triggers the display of the error messages
+       }
+       console.log('If CheckoutFormGroup valid? : ' + this.checkoutFormGroup.valid);
+   }
+   ```
+
+   
+
+
+
+### Review Cart Totals
+

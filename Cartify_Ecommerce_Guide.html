@@ -178,6 +178,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           FrontEnd</a></li>
           <li><a href="#form-validation" id="toc-form-validation">Form
           Validation</a></li>
+          <li><a href="#review-cart-totals"
+          id="toc-review-cart-totals">Review Cart Totals</a></li>
           </ul></li>
           </ul></li>
           </ul>
@@ -2255,6 +2257,166 @@ class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb98
 <span id="cb98-19"><a href="#cb98-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
 </ol>
 <h3 id="form-validation">Form Validation</h3>
+<p>Before we submit the form to the backend … let’s perform validation.
+Angular has a set of built-in validation rules</p>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>required</td>
+<td>Must be a non-empty value</td>
+</tr>
+<tr class="even">
+<td>min</td>
+<td>Must be a number &gt;= value</td>
+</tr>
+<tr class="odd">
+<td>max</td>
+<td>Must be a number &lt;= value</td>
+</tr>
+<tr class="even">
+<td>minLength</td>
+<td>Length must be &gt;= value</td>
+</tr>
+<tr class="odd">
+<td>maxLength</td>
+<td>Length must be &lt;= value</td>
+</tr>
+<tr class="even">
+<td>pattern</td>
+<td>Must match a regular expression pattern</td>
+</tr>
+<tr class="odd">
+<td>email</td>
+<td>Match email against common regular expression patterns</td>
+</tr>
+</tbody>
+</table>
+<p>Additional Validation Features : • Define custom validators •
+Cross-field validation • Asynchronous validators</p>
+<blockquote>
+<p><strong><em>My requirements</em></strong></p>
+<ul>
+<li><p><em>All fields are required</em></p></li>
+<li><p><em>Email address: has proper email format</em></p></li>
+<li><p><em>Credit card field: only numbers allowed (16
+digits)</em></p></li>
+<li><p><em>CVC number: only numbers allowed (3 digits)</em></p></li>
+</ul>
+</blockquote>
+<p><strong>Development Process</strong></p>
+<ol type="1">
+<li><p>Create a Custom Validation that only whitespace is not allowed
+and will be treated as empty.
+<code>ng g class common/validators/CartifyValidators</code></p>
+<p><strong><em>cartify-validators.ts</em></strong> - If it ONLY has
+whitespace • then return an error (failed) • else return null
+(passed)</p>
+<div class="sourceCode" id="cb99"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> CartifyValidators {</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">// whitespace validation</span></span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">static</span> <span class="fu">notOnlyWhitespace</span>(control<span class="op">:</span> FormControl)<span class="op">:</span> ValidationErrors {</span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// check if string only contains whitespace</span></span>
+<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (control<span class="op">.</span><span class="at">value</span> <span class="op">!=</span> <span class="kw">null</span> <span class="op">&amp;&amp;</span> control<span class="op">.</span><span class="at">value</span><span class="op">.</span><span class="fu">trim</span>()<span class="op">.</span><span class="at">length</span> <span class="op">===</span> <span class="dv">0</span>) {</span>
+<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a>      <span class="co">// invalid, return error object</span></span>
+<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> { notOnlyWhitespace<span class="op">:</span> <span class="kw">true</span> }<span class="op">;</span> <span class="co">// The HTML template will check for this error key</span></span>
+<span id="cb99-10"><a href="#cb99-10" aria-hidden="true" tabindex="-1"></a>    } </span>
+<span id="cb99-11"><a href="#cb99-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb99-12"><a href="#cb99-12" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="kw">null</span><span class="op">;</span>  <span class="co">// valid, return null</span></span>
+<span id="cb99-13"><a href="#cb99-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb99-14"><a href="#cb99-14" aria-hidden="true" tabindex="-1"></a>  } </span>
+<span id="cb99-15"><a href="#cb99-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p>Specify validation rules for the form controls</p>
+<p><strong><em>checkout.component.ts</em></strong></p>
+<p><em>Mehtioning some important fields here, others fields will be
+similar.</em> Like
+<code>firstName</code>,<code>email</code>,<code>zipCode</code></p>
+<div class="sourceCode" id="cb100"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ngOnInit</span>()<span class="op">:</span> <span class="dt">void</span> {</span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span> <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="at">formBuilder</span><span class="op">.</span><span class="fu">group</span>({</span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>      customer<span class="op">:</span> <span class="kw">this</span><span class="op">.</span><span class="at">formBuilder</span><span class="op">.</span><span class="fu">group</span>({</span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>        firstName<span class="op">:</span> <span class="kw">new</span> <span class="fu">FormControl</span>(<span class="st">&#39;&#39;</span><span class="op">,</span> [</span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>          Validators<span class="op">.</span><span class="at">required</span><span class="op">,</span></span>
+<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a>          Validators<span class="op">.</span><span class="fu">minLength</span>(<span class="dv">2</span>)<span class="op">,</span></span>
+<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>          CartifyValidators<span class="op">.</span><span class="at">notOnlyWhitespace</span><span class="op">,</span></span>
+<span id="cb100-8"><a href="#cb100-8" aria-hidden="true" tabindex="-1"></a>        ])<span class="op">,</span></span>
+<span id="cb100-9"><a href="#cb100-9" aria-hidden="true" tabindex="-1"></a>     <span class="op">...</span></span>
+<span id="cb100-10"><a href="#cb100-10" aria-hidden="true" tabindex="-1"></a>        email<span class="op">:</span> <span class="kw">new</span> <span class="fu">FormControl</span>(<span class="st">&#39;&#39;</span><span class="op">,</span> [</span>
+<span id="cb100-11"><a href="#cb100-11" aria-hidden="true" tabindex="-1"></a>          Validators<span class="op">.</span><span class="at">required</span><span class="op">,</span></span>
+<span id="cb100-12"><a href="#cb100-12" aria-hidden="true" tabindex="-1"></a>          Validators<span class="op">.</span><span class="fu">pattern</span>(<span class="st">&#39;^[a-z0-9._%+-]+@[a-z0-9.-]+</span><span class="sc">\\</span><span class="st">.[a-z]{2,4}$&#39;</span>)<span class="op">,</span></span>
+<span id="cb100-13"><a href="#cb100-13" aria-hidden="true" tabindex="-1"></a>        ])<span class="op">,</span></span>
+<span id="cb100-14"><a href="#cb100-14" aria-hidden="true" tabindex="-1"></a>      })<span class="op">,</span></span>
+<span id="cb100-15"><a href="#cb100-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-16"><a href="#cb100-16" aria-hidden="true" tabindex="-1"></a>      shippingAddress<span class="op">:</span> <span class="kw">this</span><span class="op">.</span><span class="at">formBuilder</span><span class="op">.</span><span class="fu">group</span>({</span>
+<span id="cb100-17"><a href="#cb100-17" aria-hidden="true" tabindex="-1"></a>     <span class="op">...</span></span>
+<span id="cb100-18"><a href="#cb100-18" aria-hidden="true" tabindex="-1"></a>        zipCode<span class="op">:</span> <span class="kw">new</span> <span class="fu">FormControl</span>(<span class="st">&#39;&#39;</span><span class="op">,</span> [Validators<span class="op">.</span><span class="at">required</span><span class="op">,</span>Validators<span class="op">.</span><span class="fu">pattern</span>(<span class="st">&#39;[0-9]{6}&#39;</span>)<span class="op">,</span>])<span class="op">,</span></span>
+<span id="cb100-19"><a href="#cb100-19" aria-hidden="true" tabindex="-1"></a>      })<span class="op">,</span></span>
+<span id="cb100-20"><a href="#cb100-20" aria-hidden="true" tabindex="-1"></a> <span class="op">...</span></span>
+<span id="cb100-21"><a href="#cb100-21" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span></code></pre></div></li>
+<li><p>Define Getter methods to access form controls</p>
+<p><strong><em>checkout.component.ts</em></strong></p>
+<div class="sourceCode" id="cb101"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co">/********* Custom Getter methods to access form controls from Html template ********************/</span></span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a><span class="kw">get</span> <span class="fu">firstName</span>() { <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;customer.firstName&#39;</span>)<span class="op">;</span> }</span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a><span class="kw">get</span> <span class="fu">email</span>() { <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;customer.email&#39;</span>)<span class="op">;</span> }</span>
+<span id="cb101-4"><a href="#cb101-4" aria-hidden="true" tabindex="-1"></a><span class="kw">get</span> <span class="fu">shippingAddressZipCode</span>() { <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;shippingAddress.zipCode&#39;</span>)<span class="op">;</span> }</span>
+<span id="cb101-5"><a href="#cb101-5" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span></code></pre></div></li>
+<li><p>Update HTML template to display error messages</p>
+<ul>
+<li><em><strong>invalid</strong>: did validations fail?</em></li>
+<li><em><strong>dirty</strong>: did user change field value?</em></li>
+<li><em><strong>touched</strong>: did field lose focus?</em></li>
+<li><em><strong>errors</strong> object contains list of validations that
+failed for this form control</em></li>
+</ul>
+<p><strong><em>checkout.component.html</em></strong></p>
+<div class="sourceCode" id="cb102"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;input-space&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;input</span> <span class="er">formControlName</span><span class="ot">=</span><span class="st">&quot;firstName&quot;</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;text&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div</span> <span class="er">*ngIf</span><span class="ot">=</span><span class="st">&quot;firstName.invalid </span><span class="er">&amp;&amp;</span><span class="st"> (firstName.dirty || firstName.touched)&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;text-danger&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;small</span> <span class="er">*ngIf</span><span class="ot">=</span><span class="st">&quot;firstName.errors[&#39;required&#39;] || firstName.errors[&#39;notOnlyWhitespace&#39;]&quot;</span> <span class="kw">&gt;</span>First Name is required<span class="kw">&lt;/small&gt;</span></span>
+<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;small</span> <span class="er">*ngIf</span><span class="ot">=</span><span class="st">&quot;firstName.errors[&#39;minlength&#39;]&quot;</span> <span class="kw">&gt;</span>First Name must be at least 2 characters long<span class="kw">&lt;/small&gt;</span></span>
+<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb102-8"><a href="#cb102-8" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span>
+<span id="cb102-9"><a href="#cb102-9" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb102-10"><a href="#cb102-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-11"><a href="#cb102-11" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;input-space&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb102-12"><a href="#cb102-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;input</span> <span class="er">formControlName</span><span class="ot">=</span><span class="st">&quot;email&quot;</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;text&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb102-13"><a href="#cb102-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div</span> <span class="er">*ngIf</span><span class="ot">=</span><span class="st">&quot;email.invalid </span><span class="er">&amp;&amp;</span><span class="st"> (email.dirty || email.touched)&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;text-danger&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb102-14"><a href="#cb102-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;small</span> <span class="er">*ngIf</span><span class="ot">=</span><span class="st">&quot;email.errors[&#39;required&#39;]&quot;</span> <span class="kw">&gt;</span>Email is required<span class="kw">&lt;/small&gt;</span></span>
+<span id="cb102-15"><a href="#cb102-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;small</span> <span class="er">*ngIf</span><span class="ot">=</span><span class="st">&quot;email.errors[&#39;pattern&#39;]&quot;</span> <span class="kw">&gt;</span>Email must be a valid email address<span class="kw">&lt;/small&gt;</span></span>
+<span id="cb102-16"><a href="#cb102-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb102-17"><a href="#cb102-17" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span>
+<span id="cb102-18"><a href="#cb102-18" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb102-19"><a href="#cb102-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-20"><a href="#cb102-20" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;input-space&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb102-21"><a href="#cb102-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;input</span> <span class="er">formControlName</span><span class="ot">=</span><span class="st">&quot;zipCode&quot;</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;text&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb102-22"><a href="#cb102-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div</span> <span class="er">*ngIf</span><span class="ot">=</span><span class="st">&quot;shippingAddressZipCode.invalid </span><span class="er">&amp;&amp;</span><span class="st"> (shippingAddressZipCode.dirty || shippingAddressZipCode.touched)&quot;</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;text-danger&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb102-23"><a href="#cb102-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;small</span> <span class="er">*ngIf</span><span class="ot">=</span><span class="st">&quot;shippingAddressZipCode.errors[&#39;required&#39;]&quot;</span> <span class="kw">&gt;</span>shippingAddressZipCode is required<span class="kw">&lt;/small&gt;</span></span>
+<span id="cb102-24"><a href="#cb102-24" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;small</span> <span class="er">*ngIf</span><span class="ot">=</span><span class="st">&quot;shippingAddressZipCode.errors[&#39;pattern&#39;]&quot;</span> <span class="kw">&gt;</span>Please enter 6 digit zipcode<span class="kw">&lt;/small&gt;</span></span>
+<span id="cb102-25"><a href="#cb102-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb102-26"><a href="#cb102-26" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span>
+<span id="cb102-27"><a href="#cb102-27" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div></li>
+<li><p>Add event handler to check validation status when submit button
+clicked</p>
+<p><strong><em>checkout.component.ts</em></strong></p>
+<div class="sourceCode" id="cb103"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="fu">onSubmit</span>() {</span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="at">invalid</span>) {</span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="fu">markAllAsTouched</span>()<span class="op">;</span>   <span class="co">// // Touching all fields triggers the display of the error messages</span></span>
+<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;If CheckoutFormGroup valid? : &#39;</span> <span class="op">+</span> <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="at">valid</span>)<span class="op">;</span></span>
+<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+</ol>
+<h3 id="review-cart-totals">Review Cart Totals</h3>
         </div>
       </div>
     </div>
