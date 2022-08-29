@@ -1,6 +1,10 @@
 # Cartify Ecommerce Guide
 
+**[Live Link](https://cartify-sg.vercel.app)** 
 
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white) ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) ![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white)![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)  ![CockroachLabs](https://img.shields.io/badge/Cockroach%20Labs-6933FF?style=for-the-badge&logo=Cockroach%20Labs&logoColor=white) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white) ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white) ![Heroku](https://img.shields.io/badge/heroku-%23430098.svg?style=for-the-badge&logo=heroku&logoColor=white) ![Bootstrap](https://img.shields.io/badge/bootstrap-%23563D7C.svg?style=for-the-badge&logo=bootstrap&logoColor=white)
+
+![Cartify Logo](cartify-ui/src/assets/images/logo.png)
 
 
 
@@ -2047,7 +2051,7 @@ Development Process
 
 
 
-### Populate Date Dropdowns
+### **Populate Date Dropdowns**
 
 Checkout Form Populate Credit Card Expiration Dates. Here **Month is dependable on Year**. First we will get the year, and on the basis of year, we will provide month values.
 
@@ -2526,9 +2530,13 @@ Development Process - Frontend
 
 
 
+**Snapshot**
+
+<img src="images/feature2.0_addressDropdown.png" alt="feature2.0_addressDropdown" style="zoom:67%;" />
 
 
-### Form Validation
+
+### **Form Validation**
 
 Before we submit the form to the backend ... let's perform validation. Angular has a set of built-in validation rules
 
@@ -2683,9 +2691,87 @@ Additional Validation Features : • Define custom validators • Cross-field va
    }
    ```
 
-   
+
+**Snapshot**
+
+<img src="images/feature2.0_formValidation.png" alt="feature2.0_formValidation" style="zoom:50%;" />
 
 
 
 ### Review Cart Totals
+
+Process flow
+
+1. CartStatusComponent subscribes to CartService 
+2. CheckoutComponent will subscribe to events from CartService. However, since CheckoutComponent is instantiated later in the application - Will miss out on previous messages.
+3. As a result, CheckoutComponent cart totals will erroneously show as - 0 for total quantity and 0.00 for total price
+4. To fix this, we can use **ReplaySubject** or **BehaviorSubject** as per our requirement.
+
+**Difference between `Subject` , `ReplaySubject` and `BehaviorSubject`**
+
+<img src="images/feature2.0_reviewCarttotal1.png" alt="feature2.0_reviewCarttotal1" style="zoom: 67%;" />
+
+<img src="images/feature2.0_reviewCarttotal2.png" alt="feature2.0_reviewCarttotal2" style="zoom:67%;" />
+
+<img src="images/feature2.0_reviewCarttotal3.png" alt="feature2.0_reviewCarttotal3" style="zoom:67%;" />
+
+
+
+**Development Process**
+
+1. Inject CartService into CheckoutComponent
+
+2. In ngOnit method, call new method: reviewCartDetails()
+
+3. Add code for new method: reviewCartDetails()
+
+   ***checkout.component.ts***
+
+   ```typescript
+   export class CheckoutComponent implements OnInit {
+   ...
+     constructor( ..., private cartService: CartService ) {}
+   
+     ngOnInit(): void {
+   ...
+       // Populate Review Your Order values
+       this.reviewCartDetails();
+     }
+   ...
+   
+     reviewCartDetails() {
+       this.cartService.totalQuantity.subscribe(
+         (totalQuantity) => (this.totalQuantity = totalQuantity)
+       );
+       this.cartService.totalPrice.subscribe(
+         (totalPrice) => (this.totalPrice = totalPrice)
+       );
+     }
+   }
+   ```
+
+4. Update for CartService: *Change Subject to BehaviorSubject*
+
+   ***cart.service.ts***
+
+   ```typescript
+   totalPrice: Subject<number> = new BehaviorSubject<number>(0);
+   totalQuantity: Subject<number> = new BehaviorSubject<number>(0);
+   ```
+
+
+
+**Snapshot**
+
+<img src="images/feature2.0_reviewCarttotal4.png" alt="feature2.0_reviewCarttotal4" style="zoom: 50%;" />
+
+
+
+
+
+## **Save the Order**
+
+### SaveOrder to DB- Backend
+
+
 

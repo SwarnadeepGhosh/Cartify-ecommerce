@@ -176,8 +176,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <li><a href="#address-dropdowns--frontend"
           id="toc-address-dropdowns--frontend">Address Dropdowns-
           FrontEnd</a></li>
-          <li><a href="#form-validation" id="toc-form-validation">Form
-          Validation</a></li>
+          <li><a href="#form-validation"
+          id="toc-form-validation"><strong>Form
+          Validation</strong></a></li>
           <li><a href="#review-cart-totals"
           id="toc-review-cart-totals">Review Cart Totals</a></li>
           </ul></li>
@@ -187,6 +188,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         
 <h1 id="cartify-ecommerce-guide">Cartify Ecommerce Guide</h1>
+<p><strong><a href="https://cartify-sg.vercel.app">Live
+Link</a></strong></p>
+<p><img
+src="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&amp;logo=java&amp;logoColor=white"
+alt="Java" /> <img
+src="https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&amp;logo=spring&amp;logoColor=white"
+alt="Spring" /> <img
+src="https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&amp;logo=angular&amp;logoColor=white"
+alt="Angular" /><img
+src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&amp;logo=typescript&amp;logoColor=white"
+alt="TypeScript" /> <img
+src="https://img.shields.io/badge/Cockroach%20Labs-6933FF?style=for-the-badge&amp;logo=Cockroach%20Labs&amp;logoColor=white"
+alt="CockroachLabs" /> <img
+src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&amp;logo=postgresql&amp;logoColor=white"
+alt="Postgres" /> <img
+src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&amp;logo=vercel&amp;logoColor=white"
+alt="Vercel" /> <img
+src="https://img.shields.io/badge/heroku-%23430098.svg?style=for-the-badge&amp;logo=heroku&amp;logoColor=white"
+alt="Heroku" /> <img
+src="https://img.shields.io/badge/bootstrap-%23563D7C.svg?style=for-the-badge&amp;logo=bootstrap&amp;logoColor=white"
+alt="Bootstrap" /></p>
+<figure>
+<img src="cartify-ui/src/assets/images/logo.png" alt="Cartify Logo" />
+<figcaption aria-hidden="true">Cartify Logo</figcaption>
+</figure>
 <h2 id="introduction">Introduction</h2>
 <p>Download the Source Code and PDF Files</p>
 <p><strong>Download Source Code:</strong> <a
@@ -2256,7 +2282,9 @@ class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb98
 <span id="cb98-18"><a href="#cb98-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
 <span id="cb98-19"><a href="#cb98-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
 </ol>
-<h3 id="form-validation">Form Validation</h3>
+<p><strong>Snapshot</strong></p>
+<p><img src="images/feature2.0_addressDropdown.png" alt="feature2.0_addressDropdown" style="zoom:67%;" /></p>
+<h3 id="form-validation"><strong>Form Validation</strong></h3>
 <p>Before we submit the form to the backend … let’s perform validation.
 Angular has a set of built-in validation rules</p>
 <table>
@@ -2416,7 +2444,61 @@ class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb10
 <span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;If CheckoutFormGroup valid? : &#39;</span> <span class="op">+</span> <span class="kw">this</span><span class="op">.</span><span class="at">checkoutFormGroup</span><span class="op">.</span><span class="at">valid</span>)<span class="op">;</span></span>
 <span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
 </ol>
+<p><strong>Snapshot</strong></p>
+<p><img src="images/feature2.0_formValidation.png" alt="feature2.0_formValidation" style="zoom:50%;" /></p>
 <h3 id="review-cart-totals">Review Cart Totals</h3>
+<p>Process flow</p>
+<ol type="1">
+<li>CartStatusComponent subscribes to CartService</li>
+<li>CheckoutComponent will subscribe to events from CartService.
+However, since CheckoutComponent is instantiated later in the
+application - Will miss out on previous messages.</li>
+<li>As a result, CheckoutComponent cart totals will erroneously show as
+- 0 for total quantity and 0.00 for total price</li>
+<li>To fix this, we can use <strong>ReplaySubject</strong> or
+<strong>BehaviorSubject</strong> as per our requirement.</li>
+</ol>
+<p><strong>Difference between <code>Subject</code> ,
+<code>ReplaySubject</code> and <code>BehaviorSubject</code></strong></p>
+<p><img src="images/feature2.0_reviewCarttotal1.png" alt="feature2.0_reviewCarttotal1" style="zoom: 67%;" /></p>
+<p><img src="images/feature2.0_reviewCarttotal2.png" alt="feature2.0_reviewCarttotal2" style="zoom:67%;" /></p>
+<p><img src="images/feature2.0_reviewCarttotal3.png" alt="feature2.0_reviewCarttotal3" style="zoom:67%;" /></p>
+<p><strong>Development Process</strong></p>
+<ol type="1">
+<li><p>Inject CartService into CheckoutComponent</p></li>
+<li><p>In ngOnit method, call new method: reviewCartDetails()</p></li>
+<li><p>Add code for new method: reviewCartDetails()</p>
+<p><strong><em>checkout.component.ts</em></strong></p>
+<div class="sourceCode" id="cb104"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">class</span> CheckoutComponent <span class="kw">implements</span> OnInit {</span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constructor</span>( <span class="op">...,</span> <span class="kw">private</span> cartService<span class="op">:</span> CartService ) {}</span>
+<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-5"><a href="#cb104-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ngOnInit</span>()<span class="op">:</span> <span class="dt">void</span> {</span>
+<span id="cb104-6"><a href="#cb104-6" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb104-7"><a href="#cb104-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Populate Review Your Order values</span></span>
+<span id="cb104-8"><a href="#cb104-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">reviewCartDetails</span>()<span class="op">;</span></span>
+<span id="cb104-9"><a href="#cb104-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb104-10"><a href="#cb104-10" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb104-11"><a href="#cb104-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-12"><a href="#cb104-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reviewCartDetails</span>() {</span>
+<span id="cb104-13"><a href="#cb104-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">cartService</span><span class="op">.</span><span class="at">totalQuantity</span><span class="op">.</span><span class="fu">subscribe</span>(</span>
+<span id="cb104-14"><a href="#cb104-14" aria-hidden="true" tabindex="-1"></a>      (totalQuantity) <span class="kw">=&gt;</span> (<span class="kw">this</span><span class="op">.</span><span class="at">totalQuantity</span> <span class="op">=</span> totalQuantity)</span>
+<span id="cb104-15"><a href="#cb104-15" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb104-16"><a href="#cb104-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">cartService</span><span class="op">.</span><span class="at">totalPrice</span><span class="op">.</span><span class="fu">subscribe</span>(</span>
+<span id="cb104-17"><a href="#cb104-17" aria-hidden="true" tabindex="-1"></a>      (totalPrice) <span class="kw">=&gt;</span> (<span class="kw">this</span><span class="op">.</span><span class="at">totalPrice</span> <span class="op">=</span> totalPrice)</span>
+<span id="cb104-18"><a href="#cb104-18" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb104-19"><a href="#cb104-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb104-20"><a href="#cb104-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p>Update for CartService: <em>Change Subject to
+BehaviorSubject</em></p>
+<p><strong><em>cart.service.ts</em></strong></p>
+<div class="sourceCode" id="cb105"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>totalPrice<span class="op">:</span> Subject<span class="op">&lt;</span><span class="dt">number</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">BehaviorSubject</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">&gt;</span>(<span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>totalQuantity<span class="op">:</span> Subject<span class="op">&lt;</span><span class="dt">number</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">BehaviorSubject</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">&gt;</span>(<span class="dv">0</span>)<span class="op">;</span></span></code></pre></div></li>
+</ol>
+<p><strong>Snapshot</strong></p>
+<p><img src="images/feature2.0_reviewCarttotal4.png" alt="feature2.0_reviewCarttotal4" style="zoom: 50%;" /></p>
         </div>
       </div>
     </div>

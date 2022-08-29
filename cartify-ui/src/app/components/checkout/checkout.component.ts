@@ -8,6 +8,7 @@ import {
 import { Country } from 'src/app/common/country';
 import { State } from 'src/app/common/state';
 import { CartifyValidators } from 'src/app/common/validators/cartify-validators';
+import { CartService } from 'src/app/services/cart.service';
 import { CheckoutFormService } from 'src/app/services/checkout-form.service';
 
 @Component({
@@ -30,7 +31,8 @@ export class CheckoutComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private checkoutService: CheckoutFormService
+    private checkoutService: CheckoutFormService,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
@@ -123,6 +125,9 @@ export class CheckoutComponent implements OnInit {
     this.checkoutService.getCountries().subscribe((data) => {
       this.countries = data;
     });
+
+    // Populate Review Your Order values
+    this.reviewCartDetails();
   }
 
   onSubmit() {
@@ -217,4 +222,14 @@ export class CheckoutComponent implements OnInit {
       formGroup.get('state').setValue(data[0]); // select first item by default
     });
   }
+
+  reviewCartDetails() {
+    this.cartService.totalQuantity.subscribe(
+      (totalQuantity) => (this.totalQuantity = totalQuantity)
+    );
+    this.cartService.totalPrice.subscribe(
+      (totalPrice) => (this.totalPrice = totalPrice)
+    );
+  }
+
 }
