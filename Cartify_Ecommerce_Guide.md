@@ -2773,5 +2773,18 @@ Process flow
 
 ### SaveOrder to DB- Backend
 
+(to be updated)
 
 
+
+### SaveOrder to DB- Frontend
+
+(to be updated)
+
+
+
+# Release 3.0
+
+### Login-Logout Functionality
+
+(to be updated)
