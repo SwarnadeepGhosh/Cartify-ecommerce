@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.swarna</groupId>
-	<artifactId>Cartify-ecommerce</artifactId>
+	<artifactId>cartify-ecommerce</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Cartify-ecommerce</name>
+	<name>cartify-ecommerce</name>
 	<description>Cartify-ecommerce fullstack project with Angular and Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>

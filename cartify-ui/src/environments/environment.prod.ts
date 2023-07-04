@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiServerUrl : 'https://cartify-ecommerce-fullstack.herokuapp.com/api'
+  apiServerUrl : 'https://cartify-backend.azurewebsites.net/api'
 };
